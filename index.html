@@ -272,10 +272,6 @@
         background: #e8eaf6;
         color: #3949ab;
       }
-      .btn-danger {
-        background: #ffebee;
-        color: #c62828;
-      }
       .btn:disabled {
         opacity: 0.6;
       }
@@ -534,6 +530,7 @@
         'https://kku-follow.pongka.workers.dev/auth/callback';
 
       let currentUser = null;
+      let sessionToken = localStorage.getItem('kku_session_token') || '';
       let recognition = null;
       let isListening = false;
       let currentTranscript = '';
@@ -560,9 +557,14 @@
       }
 
       async function callBackend(action, data) {
+        const headers = { 'Content-Type': 'application/json' };
+        if (sessionToken) {
+          headers['Authorization'] = 'Bearer ' + sessionToken;
+        }
+
         const response = await fetch(BACKEND_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: headers,
           credentials: 'include',
           body: JSON.stringify({ action: action, data: data || {} }),
         });
@@ -572,8 +574,7 @@
           return JSON.parse(text);
         } catch (e) {
           throw new Error(
-            'เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (ไม่ใช่ JSON). ตรวจ Deploy Apps Script / Worker. รายละเอียด: ' +
-              text.substring(0, 80)
+            'เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง. รายละเอียด: ' + text.substring(0, 80)
           );
         }
       }
@@ -989,10 +990,23 @@
       window.addEventListener('load', function () {
         const hash = window.location.hash;
 
+        // ดักรับ Session Token จากการล็อกอินสำเร็จ
+        if (hash.startsWith('#session=')) {
+          sessionToken = decodeURIComponent(hash.substring('#session='.length));
+          localStorage.setItem('kku_session_token', sessionToken);
+          history.replaceState(null, '', window.location.pathname);
+        }
+
         if (hash.startsWith('#error=')) {
           const errCode = hash.substring('#error='.length);
           history.replaceState(null, '', window.location.pathname);
           showError('เข้าสู่ระบบไม่สำเร็จ (' + errCode + ') กรุณาลองใหม่');
+          initGoogleSignIn();
+          return;
+        }
+
+        // ถ้ายังไม่มี Session Token ให้แสดงปุ่มล็อกอินทันที (ไม่ยิง 401 กวนใจ)
+        if (!sessionToken) {
           initGoogleSignIn();
           return;
         }
@@ -1004,11 +1018,15 @@
               currentUser = result.data.user;
               showHome();
             } else {
+              localStorage.removeItem('kku_session_token');
+              sessionToken = '';
               document.getElementById('loadingScreen').style.display = 'none';
               initGoogleSignIn();
             }
           })
           .catch(function () {
+            localStorage.removeItem('kku_session_token');
+            sessionToken = '';
             document.getElementById('loadingScreen').style.display = 'none';
             initGoogleSignIn();
           });
