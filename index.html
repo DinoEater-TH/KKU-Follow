@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
   <head>
     <meta charset="UTF-8" />
@@ -18,7 +18,7 @@
       }
       body {
         font-family:
-          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         background: #f5f5f5;
         color: #333;
         min-height: 100vh;
@@ -272,6 +272,10 @@
         background: #e8eaf6;
         color: #3949ab;
       }
+      .btn-danger {
+        background: #ffebee;
+        color: #c62828;
+      }
       .btn:disabled {
         opacity: 0.6;
       }
@@ -524,48 +528,53 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
       const GOOGLE_CLIENT_ID =
-        '928908034346-e1isqsjdopuh9o8iitsdff33aghuujad.apps.googleusercontent.com';
-      const BACKEND_URL = 'https://kku-follow.pongka.workers.dev';
+        "928908034346-e1isqsjdopuh9o8iitsdff33aghuujad.apps.googleusercontent.com";
+      const BACKEND_URL = "https://kku-follow.pongka.workers.dev";
       const LOGIN_REDIRECT_URI =
-        'https://kku-follow.pongka.workers.dev/auth/callback';
+        "https://kku-follow.pongka.workers.dev/auth/callback";
 
       let currentUser = null;
-      let sessionToken = localStorage.getItem('kku_session_token') || '';
+      let sessionToken = localStorage.getItem("kku_session_token") || "";
       let recognition = null;
       let isListening = false;
-      let currentTranscript = '';
+      let currentTranscript = "";
       let lastParsed = null;
-      let savedWorkId = '';
+      let savedWorkId = "";
 
       function initGoogleSignIn() {
         google.accounts.id.initialize({
           client_id: GOOGLE_CLIENT_ID,
-          ux_mode: 'redirect',
+          ux_mode: "redirect",
           login_uri: LOGIN_REDIRECT_URI,
         });
 
         google.accounts.id.renderButton(
-          document.getElementById('googleSignInBtn'),
+          document.getElementById("googleSignInBtn"),
           {
-            theme: 'outline',
-            size: 'large',
-            type: 'standard',
-            text: 'signin_with',
-            shape: 'rectangular',
+            theme: "outline",
+            size: "large",
+            type: "standard",
+            text: "signin_with",
+            shape: "rectangular",
           }
         );
       }
 
+      function clearSession() {
+        localStorage.removeItem("kku_session_token");
+        sessionToken = "";
+      }
+
       async function callBackend(action, data) {
-        const headers = { 'Content-Type': 'application/json' };
+        const headers = { "Content-Type": "application/json" };
         if (sessionToken) {
-          headers['Authorization'] = 'Bearer ' + sessionToken;
+          headers["Authorization"] = "Bearer " + sessionToken;
         }
 
         const response = await fetch(BACKEND_URL, {
-          method: 'POST',
+          method: "POST",
           headers: headers,
-          credentials: 'include',
+          credentials: "include",
           body: JSON.stringify({ action: action, data: data || {} }),
         });
 
@@ -574,29 +583,30 @@
           return JSON.parse(text);
         } catch (e) {
           throw new Error(
-            'เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง. รายละเอียด: ' + text.substring(0, 80)
+            "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง. รายละเอียด: " +
+              text.substring(0, 80)
           );
         }
       }
 
       function showScreen(screenName) {
         document
-          .querySelectorAll('.screen')
-          .forEach(s => s.classList.remove('active'));
+          .querySelectorAll(".screen")
+          .forEach((s) => s.classList.remove("active"));
         document
-          .querySelectorAll('.nav-item')
-          .forEach(n => n.classList.remove('active'));
+          .querySelectorAll(".nav-item")
+          .forEach((n) => n.classList.remove("active"));
 
         const screenMap = {
-          home: 'homeScreen',
-          history: 'historyScreen',
-          problems: 'problemsScreen',
-          knowledge: 'knowledgeScreen',
-          settings: 'settingsScreen',
+          home: "homeScreen",
+          history: "historyScreen",
+          problems: "problemsScreen",
+          knowledge: "knowledgeScreen",
+          settings: "settingsScreen",
         };
 
-        document.getElementById(screenMap[screenName]).classList.add('active');
-        const navItems = document.querySelectorAll('.nav-item');
+        document.getElementById(screenMap[screenName]).classList.add("active");
+        const navItems = document.querySelectorAll(".nav-item");
         const navIndex = {
           home: 0,
           history: 1,
@@ -604,37 +614,37 @@
           knowledge: 3,
           settings: 4,
         };
-        navItems[navIndex[screenName]].classList.add('active');
+        navItems[navIndex[screenName]].classList.add("active");
       }
 
       function showLoading() {
         document
-          .querySelectorAll('.screen')
-          .forEach(s => s.classList.remove('active'));
-        document.getElementById('loadingScreen').style.display = 'block';
+          .querySelectorAll(".screen")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById("loadingScreen").style.display = "block";
       }
 
       function showHome() {
-        document.getElementById('loadingScreen').style.display = 'none';
-        document.getElementById('loginScreen').classList.remove('active');
-        document.getElementById('homeScreen').classList.add('active');
-        document.getElementById('bottomNav').style.display = 'flex';
-        document.getElementById('userName').textContent =
+        document.getElementById("loadingScreen").style.display = "none";
+        document.getElementById("loginScreen").classList.remove("active");
+        document.getElementById("homeScreen").classList.add("active");
+        document.getElementById("bottomNav").style.display = "flex";
+        document.getElementById("userName").textContent =
           currentUser.displayName;
-        document.getElementById('userRole').textContent =
-          currentUser.role === 'super_admin' ? 'Super Admin' : 'User';
+        document.getElementById("userRole").textContent =
+          currentUser.role === "super_admin" ? "Super Admin" : "User";
       }
 
       function showError(message) {
-        document.getElementById('loadingScreen').style.display = 'none';
-        document.getElementById('loginError').textContent = message;
-        document.getElementById('loginError').style.display = 'block';
+        document.getElementById("loadingScreen").style.display = "none";
+        document.getElementById("loginError").textContent = message;
+        document.getElementById("loginError").style.display = "block";
       }
 
       function showHomeMessage(text, isError) {
-        const el = document.getElementById('homeMessage');
-        el.style.display = 'block';
-        el.className = isError ? 'error-message' : 'success-message';
+        const el = document.getElementById("homeMessage");
+        el.style.display = "block";
+        el.className = isError ? "error-message" : "success-message";
         el.textContent = text;
       }
 
@@ -647,21 +657,21 @@
         if (!SR) return null;
 
         const rec = new SR();
-        rec.lang = 'th-TH';
+        rec.lang = "th-TH";
         rec.continuous = false;
         rec.interimResults = true;
         rec.maxAlternatives = 1;
 
         rec.onstart = function () {
           isListening = true;
-          document.getElementById('micButton').classList.add('listening');
-          document.getElementById('micLabel').textContent =
-            'กำลังฟัง... พูดได้เลย';
+          document.getElementById("micButton").classList.add("listening");
+          document.getElementById("micLabel").textContent =
+            "กำลังฟัง... พูดได้เลย";
         };
 
         rec.onresult = function (event) {
-          let interim = '';
-          let finalText = '';
+          let interim = "";
+          let finalText = "";
           for (let i = event.resultIndex; i < event.results.length; i++) {
             const t = event.results[i][0].transcript;
             if (event.results[i].isFinal) {
@@ -671,23 +681,23 @@
             }
           }
           if (finalText) {
-            currentTranscript = (currentTranscript + ' ' + finalText).trim();
+            currentTranscript = (currentTranscript + " " + finalText).trim();
           }
-          document.getElementById('micLabel').textContent =
-            interim || currentTranscript || 'กำลังฟัง...';
+          document.getElementById("micLabel").textContent =
+            interim || currentTranscript || "กำลังฟัง...";
         };
 
         rec.onerror = function (event) {
           isListening = false;
-          document.getElementById('micButton').classList.remove('listening');
-          document.getElementById('micLabel').textContent =
-            'แตะเพื่อพูดบันทึกงาน';
-          if (event.error === 'not-allowed') {
-            showHomeMessage('ไม่อนุญาตใช้ไมโครโฟน — ใช้พิมพ์แทนได้', true);
+          document.getElementById("micButton").classList.remove("listening");
+          document.getElementById("micLabel").textContent =
+            "แตะเพื่อพูดบันทึกงาน";
+          if (event.error === "not-allowed") {
+            showHomeMessage("ไม่อนุญาตใช้ไมโครโฟน — ใช้พิมพ์แทนได้", true);
             openTextInputModal();
-          } else if (event.error !== 'aborted' && event.error !== 'no-speech') {
+          } else if (event.error !== "aborted" && event.error !== "no-speech") {
             showHomeMessage(
-              'ไมโครโฟนมีปัญหา (' + event.error + ') — ใช้พิมพ์แทนได้',
+              "ไมโครโฟนมีปัญหา (" + event.error + ") — ใช้พิมพ์แทนได้",
               true
             );
             openTextInputModal();
@@ -696,9 +706,9 @@
 
         rec.onend = function () {
           isListening = false;
-          document.getElementById('micButton').classList.remove('listening');
-          document.getElementById('micLabel').textContent =
-            'แตะเพื่อพูดบันทึกงาน';
+          document.getElementById("micButton").classList.remove("listening");
+          document.getElementById("micLabel").textContent =
+            "แตะเพื่อพูดบันทึกงาน";
           if (currentTranscript && currentTranscript.trim()) {
             openConfirmModal(currentTranscript.trim());
           }
@@ -709,7 +719,7 @@
 
       function toggleVoiceInput() {
         if (!supportsSpeech()) {
-          showHomeMessage('เบราว์เซอร์นี้ไม่รองรับเสียง — ใช้พิมพ์แทน', true);
+          showHomeMessage("เบราว์เซอร์นี้ไม่รองรับเสียง — ใช้พิมพ์แทน", true);
           openTextInputModal();
           return;
         }
@@ -723,7 +733,7 @@
           return;
         }
 
-        currentTranscript = '';
+        currentTranscript = "";
         try {
           recognition.start();
         } catch (e) {
@@ -732,18 +742,18 @@
       }
 
       function openTextInputModal() {
-        document.getElementById('manualTranscript').value = '';
-        document.getElementById('textInputModal').classList.add('open');
+        document.getElementById("manualTranscript").value = "";
+        document.getElementById("textInputModal").classList.add("open");
       }
 
       function closeTextInputModal() {
-        document.getElementById('textInputModal').classList.remove('open');
+        document.getElementById("textInputModal").classList.remove("open");
       }
 
       function submitManualTranscript() {
-        const text = document.getElementById('manualTranscript').value.trim();
+        const text = document.getElementById("manualTranscript").value.trim();
         if (!text) {
-          alert('กรุณากรอกรายละเอียดงาน');
+          alert("กรุณากรอกรายละเอียดงาน");
           return;
         }
         closeTextInputModal();
@@ -754,13 +764,13 @@
         const result = {
           originalTranscript: text,
           workDate: todayISO(),
-          startTime: '',
-          endTime: '',
-          location: '',
-          workType: '',
-          title: '',
+          startTime: "",
+          endTime: "",
+          location: "",
+          workType: "",
+          title: "",
           description: text,
-          notes: '',
+          notes: "",
         };
 
         const dateMatch = text.match(
@@ -774,7 +784,7 @@
             : new Date().getFullYear();
           if (y < 100) y += 2000;
           if (y > 2500) y -= 543;
-          result.workDate = y + '-' + pad2(m) + '-' + pad2(d);
+          result.workDate = y + "-" + pad2(m) + "-" + pad2(d);
         } else if (/วันนี้/.test(text)) {
           result.workDate = todayISO();
         } else if (/เมื่อวาน/.test(text)) {
@@ -787,26 +797,26 @@
           /(\d{1,2})[\.:](\d{2})\s*(?:น\.?)?\s*(?:ถึง|-|–|—)\s*(\d{1,2})[\.:](\d{2})/
         );
         if (timeRange) {
-          result.startTime = pad2(timeRange[1]) + ':' + timeRange[2];
-          result.endTime = pad2(timeRange[3]) + ':' + timeRange[4];
+          result.startTime = pad2(timeRange[1]) + ":" + timeRange[2];
+          result.endTime = pad2(timeRange[3]) + ":" + timeRange[4];
         } else {
           const singleTime = text.match(
             /(?:เวลา|ตี|โมง)?\s*(\d{1,2})[\.:](\d{2})\s*(?:น\.?)?/
           );
           if (singleTime) {
-            result.startTime = pad2(singleTime[1]) + ':' + singleTime[2];
+            result.startTime = pad2(singleTime[1]) + ":" + singleTime[2];
           }
           if (/เช้า|ครึ่งวันเช้า/.test(text) && !result.startTime) {
-            result.startTime = '08:30';
-            result.endTime = '12:00';
+            result.startTime = "08:30";
+            result.endTime = "12:00";
           }
           if (/บ่าย|ครึ่งวันบ่าย/.test(text) && !result.endTime) {
-            result.startTime = result.startTime || '13:00';
-            result.endTime = '16:30';
+            result.startTime = result.startTime || "13:00";
+            result.endTime = "16:30";
           }
           if (/ทั้งวัน|เต็มวัน/.test(text)) {
-            result.startTime = result.startTime || '08:30';
-            result.endTime = '16:30';
+            result.startTime = result.startTime || "08:30";
+            result.endTime = result.endTime || "16:30";
           }
         }
 
@@ -815,29 +825,29 @@
         );
         if (locMatch) {
           result.location = locMatch[1]
-            .replace(/\s+(ครึ่งวัน|เช้า|บ่าย|เวลา|ถึง).*$/, '')
+            .replace(/\s+(ครึ่งวัน|เช้า|บ่าย|เวลา|ถึง).*$/, "")
             .trim();
         }
 
-        if (/ถ่ายรูป|ถ่ายภาพ|ถ่าย/.test(text)) result.workType = 'ถ่ายรูป';
-        else if (/ประชุม/.test(text)) result.workType = 'ประชุม';
+        if (/ถ่ายรูป|ถ่ายภาพ|ถ่าย/.test(text)) result.workType = "ถ่ายรูป";
+        else if (/ประชุม/.test(text)) result.workType = "ประชุม";
         else if (/ซ่อม|แก้ไข|แก้ปัญหา/.test(text))
-          result.workType = 'ซ่อม/แก้ไข';
-        else if (/อบรม|ฝึก/.test(text)) result.workType = 'อบรม';
+          result.workType = "ซ่อม/แก้ไข";
+        else if (/อบรม|ฝึก/.test(text)) result.workType = "อบรม";
         else if (/จัดเตรียม|เซ็ตอัพ|setup/i.test(text))
-          result.workType = 'จัดเตรียม';
+          result.workType = "จัดเตรียม";
 
         let title = text;
-        if (result.location) title = title.replace(result.location, '').trim();
+        if (result.location) title = title.replace(result.location, "").trim();
         title = title
-          .replace(/\d{1,2}[\.:]\d{2}/g, '')
+          .replace(/\d{1,2}[\.:]\d{2}/g, "")
           .replace(
             /ถึง|ครึ่งวัน|เช้า|บ่าย|ทั้งวัน|เต็มวัน|วันนี้|เมื่อวาน/g,
-            ' '
+            " "
           );
-        title = title.replace(/\s+/g, ' ').trim();
-        if (title.length > 60) title = title.substring(0, 60) + '...';
-        result.title = title || result.workType || 'งานบันทึกด้วยเสียง';
+        title = title.replace(/\s+/g, " ").trim();
+        if (title.length > 60) title = title.substring(0, 60) + "...";
+        result.title = title || result.workType || "งานบันทึกด้วยเสียง";
 
         return result;
       }
@@ -849,185 +859,181 @@
       function toISODate(d) {
         return (
           d.getFullYear() +
-          '-' +
+          "-" +
           pad2(d.getMonth() + 1) +
-          '-' +
+          "-" +
           pad2(d.getDate())
         );
       }
 
       function pad2(n) {
-        return String(n).padStart(2, '0');
+        return String(n).padStart(2, "0");
       }
 
       function openConfirmModal(transcript) {
         lastParsed = parseWorkFromText(transcript);
-        document.getElementById('confirmTranscript').textContent = transcript;
-        document.getElementById('fieldWorkDate').value =
+        document.getElementById("confirmTranscript").textContent = transcript;
+        document.getElementById("fieldWorkDate").value =
           lastParsed.workDate || todayISO();
-        document.getElementById('fieldStartTime').value =
-          lastParsed.startTime || '';
-        document.getElementById('fieldEndTime').value =
-          lastParsed.endTime || '';
-        document.getElementById('fieldLocation').value =
-          lastParsed.location || '';
-        document.getElementById('fieldWorkType').value =
-          lastParsed.workType || '';
-        document.getElementById('fieldTitle').value = lastParsed.title || '';
-        document.getElementById('fieldDescription').value =
+        document.getElementById("fieldStartTime").value =
+          lastParsed.startTime || "";
+        document.getElementById("fieldEndTime").value =
+          lastParsed.endTime || "";
+        document.getElementById("fieldLocation").value =
+          lastParsed.location || "";
+        document.getElementById("fieldWorkType").value =
+          lastParsed.workType || "";
+        document.getElementById("fieldTitle").value = lastParsed.title || "";
+        document.getElementById("fieldDescription").value =
           lastParsed.description || transcript;
-        document.getElementById('fieldNotes').value = '';
-        document.getElementById('confirmModal').classList.add('open');
+        document.getElementById("fieldNotes").value = "";
+        document.getElementById("confirmModal").classList.add("open");
       }
 
       function closeConfirmModal() {
-        document.getElementById('confirmModal').classList.remove('open');
-        currentTranscript = '';
+        document.getElementById("confirmModal").classList.remove("open");
+        currentTranscript = "";
       }
 
       async function confirmSaveWork() {
-        const btn = document.getElementById('btnSaveWork');
+        const btn = document.getElementById("btnSaveWork");
         btn.disabled = true;
-        btn.textContent = 'กำลังบันทึก...';
+        btn.textContent = "กำลังบันทึก...";
 
         const payload = {
           originalTranscript:
-            document.getElementById('confirmTranscript').textContent,
-          workDate: document.getElementById('fieldWorkDate').value,
-          startTime: document.getElementById('fieldStartTime').value,
-          endTime: document.getElementById('fieldEndTime').value,
-          location: document.getElementById('fieldLocation').value.trim(),
-          workType: document.getElementById('fieldWorkType').value.trim(),
-          title: document.getElementById('fieldTitle').value.trim(),
-          description: document.getElementById('fieldDescription').value.trim(),
-          notes: document.getElementById('fieldNotes').value.trim(),
+            document.getElementById("confirmTranscript").textContent,
+          workDate: document.getElementById("fieldWorkDate").value,
+          startTime: document.getElementById("fieldStartTime").value,
+          endTime: document.getElementById("fieldEndTime").value,
+          location: document.getElementById("fieldLocation").value.trim(),
+          workType: document.getElementById("fieldWorkType").value.trim(),
+          title: document.getElementById("fieldTitle").value.trim(),
+          description: document.getElementById("fieldDescription").value.trim(),
+          notes: document.getElementById("fieldNotes").value.trim(),
         };
 
         try {
-          const result = await callBackend('work.create', payload);
+          const result = await callBackend("work.create", payload);
           btn.disabled = false;
-          btn.textContent = 'ยืนยันบันทึก';
+          btn.textContent = "ยืนยันบันทึก";
 
           if (result.success) {
             closeConfirmModal();
             savedWorkId = result.data.work.workId;
-            document.getElementById('successWorkId').textContent =
+            document.getElementById("successWorkId").textContent =
               result.data.work.workId;
-            document.getElementById('successModal').classList.add('open');
+            document.getElementById("successModal").classList.add("open");
           } else {
-            alert('บันทึกไม่สำเร็จ: ' + result.error);
+            alert("บันทึกไม่สำเร็จ: " + result.error);
           }
         } catch (err) {
           btn.disabled = false;
-          btn.textContent = 'ยืนยันบันทึก';
-          alert('เกิดข้อผิดพลาด: ' + err.message);
+          btn.textContent = "ยืนยันบันทึก";
+          alert("เกิดข้อผิดพลาด: " + err.message);
         }
       }
 
       function skipEvidence() {
-        document.getElementById('successModal').classList.remove('open');
+        document.getElementById("successModal").classList.remove("open");
         showHomeMessage(
-          'บันทึกงานเรียบร้อย สถานะ Waiting Evidence คุณสามารถกลับมาแนบรูปได้ภายหลัง',
+          "บันทึกงานเรียบร้อย สถานะ Waiting Evidence คุณสามารถกลับมาแนบรูปได้ภายหลัง",
           false
         );
       }
 
       function openEvidencePicker() {
         if (!savedWorkId) {
-          alert('ไม่พบรหัสงาน กรุณาลองบันทึกใหม่');
+          alert("ไม่พบรหัสงาน กรุณาลองบันทึกใหม่");
           return;
         }
-        document.getElementById('evidenceCamera').click();
+        document.getElementById("evidenceCamera").click();
       }
 
       function uploadEvidence(file) {
         if (!file) return;
-        const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+        const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
         const maxBytes = 5 * 1024 * 1024;
         if (!allowedTypes.includes(file.type)) {
-          alert('รองรับเฉพาะไฟล์ JPG, PNG และ PDF');
+          alert("รองรับเฉพาะไฟล์ JPG, PNG และ PDF");
           return;
         }
         if (file.size > maxBytes) {
-          alert('ไฟล์มีขนาดเกิน 5 MB กรุณาเลือกไฟล์ใหม่');
+          alert("ไฟล์มีขนาดเกิน 5 MB กรุณาเลือกไฟล์ใหม่");
           return;
         }
         const reader = new FileReader();
         reader.onerror = function () {
-          alert('ไม่สามารถอ่านไฟล์ได้ กรุณาลองใหม่');
+          alert("ไม่สามารถอ่านไฟล์ได้ กรุณาลองใหม่");
         };
         reader.onload = async function () {
           try {
-            const result = await callBackend('evidence.upload', {
+            const result = await callBackend("evidence.upload", {
               workId: savedWorkId,
               fileName: file.name,
               mimeType: file.type,
-              base64Data: String(reader.result).split(',')[1],
+              base64Data: String(reader.result).split(",")[1],
             });
             if (!result.success) throw new Error(result.error);
-            document.getElementById('successModal').classList.remove('open');
+            document.getElementById("successModal").classList.remove("open");
             showHomeMessage(
-              'อัปโหลดหลักฐานสำเร็จและตรวจพบไฟล์จริงใน Google Drive แล้ว',
+              "อัปโหลดหลักฐานสำเร็จและตรวจพบไฟล์จริงใน Google Drive แล้ว",
               false
             );
           } catch (err) {
             alert(
-              'Upload Failed: ' +
-                err.message +
-                '\nคุณสามารถลองใหม่ได้ทันที'
+              "Upload Failed: " + err.message + "\nคุณสามารถลองใหม่ได้ทันที"
             );
           } finally {
-            document.getElementById('evidenceCamera').value = '';
+            document.getElementById("evidenceCamera").value = "";
           }
         };
         reader.readAsDataURL(file);
       }
 
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').catch(function () {});
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw.js").catch(function () {});
       }
 
-      window.addEventListener('load', function () {
+      window.addEventListener("load", function () {
         const hash = window.location.hash;
 
-        // ดักรับ Session Token จากการล็อกอินสำเร็จ
-        if (hash.startsWith('#session=')) {
-          sessionToken = decodeURIComponent(hash.substring('#session='.length));
-          localStorage.setItem('kku_session_token', sessionToken);
-          history.replaceState(null, '', window.location.pathname);
+        if (hash.startsWith("#session=")) {
+          sessionToken = decodeURIComponent(
+            hash.substring("#session=".length)
+          );
+          localStorage.setItem("kku_session_token", sessionToken);
+          history.replaceState(null, "", window.location.pathname);
         }
 
-        if (hash.startsWith('#error=')) {
-          const errCode = hash.substring('#error='.length);
-          history.replaceState(null, '', window.location.pathname);
-          showError('เข้าสู่ระบบไม่สำเร็จ (' + errCode + ') กรุณาลองใหม่');
+        if (hash.startsWith("#error=")) {
+          const errCode = hash.substring("#error=".length);
+          history.replaceState(null, "", window.location.pathname);
+          clearSession();
+          showError("เข้าสู่ระบบไม่สำเร็จ (" + errCode + ") กรุณาลองใหม่");
           initGoogleSignIn();
           return;
         }
 
-        // ถ้ายังไม่มี Session Token ให้แสดงปุ่มล็อกอินทันที (ไม่ยิง 401 กวนใจ)
         if (!sessionToken) {
           initGoogleSignIn();
           return;
         }
 
         showLoading();
-        callBackend('auth.me', {})
+        callBackend("auth.me", {})
           .then(function (result) {
             if (result.success) {
               currentUser = result.data.user;
               showHome();
             } else {
-              localStorage.removeItem('kku_session_token');
-              sessionToken = '';
-              document.getElementById('loadingScreen').style.display = 'none';
+              clearSession();
+              document.getElementById("loadingScreen").style.display = "none";
               initGoogleSignIn();
             }
           })
           .catch(function () {
-            localStorage.removeItem('kku_session_token');
-            sessionToken = '';
-            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById("loadingScreen").style.display = "none";
             initGoogleSignIn();
           });
       });
