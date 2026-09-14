@@ -12,12 +12,11 @@
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; min-height: 100vh; padding-bottom: 80px; }
     .screen { display: none; padding: 20px; min-height: calc(100vh - 80px); }
     .screen.active { display: block; }
-    .login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; }
-    .login-screen.active { display: flex; }
+    .login-screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; }
     .app-logo { font-size: 48px; margin-bottom: 20px; }
     .app-title { font-size: 32px; font-weight: bold; color: #1a73e8; margin-bottom: 10px; }
     .app-subtitle { font-size: 16px; color: #666; margin-bottom: 40px; }
-    #googleSignInBtn { width: 100%; max-width: 300px; }
+    #googleSignInBtn { width: 100%; max-width: 300px; min-height: 44px; }
     .home-header { background: #1a73e8; color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
     .user-name { font-size: 18px; font-weight: bold; }
     .user-role { font-size: 14px; opacity: 0.9; }
@@ -121,6 +120,7 @@
   <script>
     const GOOGLE_CLIENT_ID = '928908034346-e1isqsjdopuh9o8iitsdff33aghuujad.apps.googleusercontent.com';
     const BACKEND_URL = 'https://kku-follow.pongka.workers.dev';
+    const LOGIN_REDIRECT_URI = 'https://kku-follow.pongka.workers.dev/auth/callback';
     
     let currentUser = null;
     let idToken = null;
@@ -128,7 +128,9 @@
     function initGoogleSignIn() {
       google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
-        callback: handleCredentialResponse
+        callback: handleCredentialResponse,
+        ux_mode: 'redirect',
+        login_uri: LOGIN_REDIRECT_URI
       });
 
       google.accounts.id.renderButton(
@@ -146,6 +148,7 @@
         
         if (result.success) {
           currentUser = result.data.user;
+          localStorage.setItem('kku_idToken', idToken);
           showHome();
         } else {
           showError(result.error);
@@ -215,6 +218,43 @@
     }
 
     window.addEventListener('load', () => {
+      const hash = window.location.hash;
+      
+      if (hash.startsWith('#credential=')) {
+        const credential = decodeURIComponent(hash.substring('#credential='.length));
+        history.replaceState(null, '', window.location.pathname);
+        handleCredentialResponse({ credential: credential });
+        return;
+      }
+      
+      if (hash.startsWith('#error=')) {
+        const errCode = hash.substring('#error='.length);
+        history.replaceState(null, '', window.location.pathname);
+        showError('เข้าสู่ระบบไม่สำเร็จ (' + errCode + ') กรุณาลองใหม่');
+        initGoogleSignIn();
+        return;
+      }
+      
+      const savedToken = localStorage.getItem('kku_idToken');
+      if (savedToken) {
+        idToken = savedToken;
+        showLoading();
+        callBackend('auth.me', { idToken: idToken }).then(result => {
+          if (result.success) {
+            currentUser = result.data.user;
+            showHome();
+          } else {
+            localStorage.removeItem('kku_idToken');
+            document.getElementById('loadingScreen').style.display = 'none';
+            initGoogleSignIn();
+          }
+        }).catch(() => {
+          document.getElementById('loadingScreen').style.display = 'none';
+          initGoogleSignIn();
+        });
+        return;
+      }
+      
       initGoogleSignIn();
     });
   </script>
