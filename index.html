@@ -303,6 +303,150 @@
         color: #888;
         margin-top: 6px;
       }
+
+      /* === History Page Styles === */
+      .screen-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+      .screen-title {
+        font-size: 22px;
+        font-weight: bold;
+      }
+      .refresh-btn {
+        background: #e3f2fd;
+        color: #1565c0;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .work-card {
+        background: white;
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        cursor: pointer;
+      }
+      .work-card:active {
+        transform: scale(0.98);
+      }
+      .work-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .work-card-title {
+        font-size: 16px;
+        font-weight: bold;
+        flex: 1;
+        margin-right: 10px;
+      }
+      .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .status-waiting_evidence {
+        background: #fff3e0;
+        color: #e65100;
+      }
+      .status-uploading {
+        background: #e3f2fd;
+        color: #1565c0;
+      }
+      .status-completed {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+      .status-upload_failed {
+        background: #ffebee;
+        color: #c62828;
+      }
+      .work-card-meta {
+        font-size: 13px;
+        color: #777;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .work-card-meta span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .work-id-text {
+        font-family: monospace;
+        font-size: 12px;
+        color: #1565c0;
+        background: #f0f4ff;
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+      }
+      .empty-state-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+      }
+
+      /* === Work Detail Modal === */
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .detail-label {
+        font-size: 13px;
+        color: #888;
+      }
+      .detail-value {
+        font-size: 15px;
+        color: #333;
+        text-align: right;
+        max-width: 60%;
+        word-break: break-word;
+      }
+      .evidence-list {
+        margin-top: 12px;
+      }
+      .evidence-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background: #fafafa;
+        border-radius: 10px;
+        margin-bottom: 8px;
+      }
+      .evidence-icon {
+        font-size: 24px;
+      }
+      .evidence-info {
+        flex: 1;
+      }
+      .evidence-name {
+        font-size: 14px;
+        font-weight: 600;
+        word-break: break-all;
+      }
+      .evidence-meta {
+        font-size: 12px;
+        color: #888;
+      }
       @media (min-width: 768px) {
         .screen {
           max-width: 600px;
@@ -342,11 +486,13 @@
     </div>
 
     <div id="historyScreen" class="screen">
-      <div class="placeholder">
-        <div class="placeholder-icon">📜</div>
-        <h2>ประวัติงาน</h2>
-        <p>ฟีเจอร์นี้จะแสดงใน STEP 7</p>
+      <div class="screen-header">
+        <div class="screen-title">📜 ประวัติงาน</div>
+        <button class="refresh-btn" onclick="loadWorkHistory()">
+          🔄 โหลดใหม่
+        </button>
       </div>
+      <div id="historyList"></div>
     </div>
 
     <div id="problemsScreen" class="screen">
@@ -369,7 +515,7 @@
       <div class="placeholder">
         <div class="placeholder-icon">⚙️</div>
         <h2>ตั้งค่า</h2>
-        <p>ฟีเจอร์นี้จะแสดงใน STEP 7</p>
+        <p>ฟีเจอร์นี้จะแสดงในภายหลัง</p>
       </div>
     </div>
 
@@ -493,6 +639,80 @@
       </div>
     </div>
 
+    <div class="modal-overlay" id="workDetailModal">
+      <div class="modal-sheet">
+        <div class="modal-title">รายละเอียดงาน</div>
+        <div id="detailContent"></div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="closeWorkDetail()">
+            ปิด
+          </button>
+          <button class="btn btn-primary" onclick="openEditWork()">
+            ✏️ แก้ไข
+          </button>
+        </div>
+        <div class="btn-row">
+          <button
+            class="btn btn-secondary"
+            onclick="openHistoryEvidencePicker()"
+          >
+            📷 เพิ่มหลักฐาน
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="editWorkModal">
+      <div class="modal-sheet">
+        <div class="modal-title">แก้ไขงาน</div>
+        <div class="modal-sub" id="editWorkIdLabel"></div>
+        <div class="form-group">
+          <label class="form-label">วันที่</label>
+          <input type="date" class="form-input" id="editWorkDate" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">เวลาเริ่ม</label>
+          <input type="time" class="form-input" id="editStartTime" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">เวลาสิ้นสุด</label>
+          <input type="time" class="form-input" id="editEndTime" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">สถานที่</label>
+          <input type="text" class="form-input" id="editLocation" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">ประเภทงาน</label>
+          <input type="text" class="form-input" id="editWorkType" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">หัวข้อ</label>
+          <input type="text" class="form-input" id="editTitle" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">รายละเอียดงาน</label>
+          <textarea class="form-textarea" id="editDescription"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">หมายเหตุ</label>
+          <input type="text" class="form-input" id="editNotes" />
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="closeEditWork()">
+            ยกเลิก
+          </button>
+          <button
+            class="btn btn-primary"
+            id="btnEditWork"
+            onclick="saveEditWork()"
+          >
+            บันทึก
+          </button>
+        </div>
+      </div>
+    </div>
+
     <input
       id="evidenceCamera"
       type="file"
@@ -540,6 +760,8 @@
       let currentTranscript = "";
       let lastParsed = null;
       let savedWorkId = "";
+      let currentWork = null;
+      let historyWorks = [];
 
       function initGoogleSignIn() {
         google.accounts.id.initialize({
@@ -556,7 +778,7 @@
             type: "standard",
             text: "signin_with",
             shape: "rectangular",
-          }
+          },
         );
       }
 
@@ -584,7 +806,7 @@
         } catch (e) {
           throw new Error(
             "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง. รายละเอียด: " +
-              text.substring(0, 80)
+              text.substring(0, 80),
           );
         }
       }
@@ -615,6 +837,10 @@
           settings: 4,
         };
         navItems[navIndex[screenName]].classList.add("active");
+
+        if (screenName === "history") {
+          loadWorkHistory();
+        }
       }
 
       function showLoading() {
@@ -698,7 +924,7 @@
           } else if (event.error !== "aborted" && event.error !== "no-speech") {
             showHomeMessage(
               "ไมโครโฟนมีปัญหา (" + event.error + ") — ใช้พิมพ์แทนได้",
-              true
+              true,
             );
             openTextInputModal();
           }
@@ -774,7 +1000,7 @@
         };
 
         const dateMatch = text.match(
-          /(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?/
+          /(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?/,
         );
         if (dateMatch) {
           const d = parseInt(dateMatch[1], 10);
@@ -794,14 +1020,14 @@
         }
 
         const timeRange = text.match(
-          /(\d{1,2})[\.:](\d{2})\s*(?:น\.?)?\s*(?:ถึง|-|–|—)\s*(\d{1,2})[\.:](\d{2})/
+          /(\d{1,2})[\.:](\d{2})\s*(?:น\.?)?\s*(?:ถึง|-|–|—)\s*(\d{1,2})[\.:](\d{2})/,
         );
         if (timeRange) {
           result.startTime = pad2(timeRange[1]) + ":" + timeRange[2];
           result.endTime = pad2(timeRange[3]) + ":" + timeRange[4];
         } else {
           const singleTime = text.match(
-            /(?:เวลา|ตี|โมง)?\s*(\d{1,2})[\.:](\d{2})\s*(?:น\.?)?/
+            /(?:เวลา|ตี|โมง)?\s*(\d{1,2})[\.:](\d{2})\s*(?:น\.?)?/,
           );
           if (singleTime) {
             result.startTime = pad2(singleTime[1]) + ":" + singleTime[2];
@@ -821,7 +1047,7 @@
         }
 
         const locMatch = text.match(
-          /(?:ที่|ที่\s*)((?:ตึก|อาคาร|ห้อง|คณะ|สำนัก|ศูนย์|ชั้น)[^\s,]+(?:\s+[^\s,]+){0,3})/
+          /(?:ที่|ที่\s*)((?:ตึก|อาคาร|ห้อง|คณะ|สำนัก|ศูนย์|ชั้น)[^\s,]+(?:\s+[^\s,]+){0,3})/,
         );
         if (locMatch) {
           result.location = locMatch[1]
@@ -843,7 +1069,7 @@
           .replace(/\d{1,2}[\.:]\d{2}/g, "")
           .replace(
             /ถึง|ครึ่งวัน|เช้า|บ่าย|ทั้งวัน|เต็มวัน|วันนี้|เมื่อวาน/g,
-            " "
+            " ",
           );
         title = title.replace(/\s+/g, " ").trim();
         if (title.length > 60) title = title.substring(0, 60) + "...";
@@ -938,7 +1164,7 @@
         document.getElementById("successModal").classList.remove("open");
         showHomeMessage(
           "บันทึกงานเรียบร้อย สถานะ Waiting Evidence คุณสามารถกลับมาแนบรูปได้ภายหลัง",
-          false
+          false,
         );
       }
 
@@ -978,17 +1204,331 @@
             document.getElementById("successModal").classList.remove("open");
             showHomeMessage(
               "อัปโหลดหลักฐานสำเร็จและตรวจพบไฟล์จริงใน Google Drive แล้ว",
-              false
+              false,
             );
+            if (currentWork) {
+              openWorkDetail(currentWork.workId);
+            }
           } catch (err) {
             alert(
-              "Upload Failed: " + err.message + "\nคุณสามารถลองใหม่ได้ทันที"
+              "Upload Failed: " + err.message + "\nคุณสามารถลองใหม่ได้ทันที",
             );
           } finally {
             document.getElementById("evidenceCamera").value = "";
           }
         };
         reader.readAsDataURL(file);
+      }
+
+      /* === History Page === */
+      function statusLabel(status) {
+        const labels = {
+          waiting_evidence: "รอหลักฐาน",
+          uploading: "กำลังอัปโหลด",
+          completed: "เสร็จสิ้น",
+          upload_failed: "อัปโหลดไม่สำเร็จ",
+        };
+        return labels[status] || status;
+      }
+
+      async function loadWorkHistory() {
+        const list = document.getElementById("historyList");
+        list.innerHTML =
+          '<div class="loading"><div class="spinner"></div><p>กำลังโหลดประวัติ...</p></div>';
+
+        try {
+          const result = await callBackend("work.list", {});
+          if (!result.success) throw new Error(result.error);
+
+          historyWorks = result.data.works || [];
+          renderWorkHistory(historyWorks);
+        } catch (err) {
+          list.innerHTML =
+            '<div class="error-message">โหลดไม่สำเร็จ: ' +
+            err.message +
+            "</div>";
+        }
+      }
+
+      function renderWorkHistory(works) {
+        const list = document.getElementById("historyList");
+
+        if (!works.length) {
+          list.innerHTML =
+            '<div class="empty-state"><div class="empty-state-icon">📭</div><h3>ยังไม่มีงาน</h3><p>กลับไปหน้าแรกแล้วกดปุ่มไมค์เพื่อบันทึกงานแรก</p></div>';
+          return;
+        }
+
+        list.innerHTML = works
+          .map(function (work) {
+            const dateStr = work.workDate || "";
+            const timeStr =
+              work.startTime || work.endTime
+                ? (work.startTime || "") +
+                  (work.endTime ? " - " + work.endTime : "")
+                : "";
+            const locationStr = work.location || "";
+            const evidenceIcon = work.status === "completed" ? "🟢" : "🟡";
+
+            return (
+              '<div class="work-card" onclick="openWorkDetail(\'' +
+              escapeHtml(work.workId) +
+              "')\">" +
+              '<div class="work-card-top">' +
+              '<div class="work-card-title">' +
+              escapeHtml(work.title || "งานไม่มีชื่อ") +
+              "</div>" +
+              '<span class="status-badge status-' +
+              escapeHtml(work.status || "waiting_evidence") +
+              '">' +
+              escapeHtml(statusLabel(work.status)) +
+              "</span>" +
+              "</div>" +
+              '<div class="work-card-meta">' +
+              "<span>📅 " +
+              escapeHtml(dateStr) +
+              "</span>" +
+              (timeStr ? "<span>🕐 " + escapeHtml(timeStr) + "</span>" : "") +
+              (locationStr
+                ? "<span>📍 " + escapeHtml(locationStr) + "</span>"
+                : "") +
+              "<span>" +
+              evidenceIcon +
+              "</span>" +
+              "</div>" +
+              '<div class="work-card-meta" style="margin-top:6px;">' +
+              '<span class="work-id-text">' +
+              escapeHtml(work.workId) +
+              "</span>" +
+              "</div>" +
+              "</div>"
+            );
+          })
+          .join("");
+      }
+
+      async function openWorkDetail(workId) {
+        try {
+          const [workResult, evidenceResult] = await Promise.all([
+            callBackend("work.get", { workId: workId }),
+            callBackend("evidence.list", { workId: workId }),
+          ]);
+
+          if (!workResult.success) throw new Error(workResult.error);
+
+          currentWork = workResult.data.work;
+          savedWorkId = workId;
+
+          const evidence = evidenceResult.success
+            ? evidenceResult.data.evidence || []
+            : [];
+
+          renderWorkDetail(currentWork, evidence);
+          document.getElementById("workDetailModal").classList.add("open");
+        } catch (err) {
+          alert("เปิดรายละเอียดไม่สำเร็จ: " + err.message);
+        }
+      }
+
+      function renderWorkDetail(work, evidence) {
+        const content = document.getElementById("detailContent");
+
+        let html = "";
+        html +=
+          '<div class="work-id-badge">' + escapeHtml(work.workId) + "</div>";
+
+        html += '<div class="detail-row">';
+        html += '<span class="detail-label">สถานะ</span>';
+        html +=
+          '<span class="detail-value">' +
+          escapeHtml(statusLabel(work.status)) +
+          "</span>";
+        html += "</div>";
+
+        html += '<div class="detail-row">';
+        html += '<span class="detail-label">วันที่</span>';
+        html +=
+          '<span class="detail-value">' +
+          escapeHtml(work.workDate || "-") +
+          "</span>";
+        html += "</div>";
+
+        if (work.startTime || work.endTime) {
+          html += '<div class="detail-row">';
+          html += '<span class="detail-label">เวลา</span>';
+          html +=
+            '<span class="detail-value">' +
+            escapeHtml(
+              (work.startTime || "") +
+                (work.endTime ? " - " + work.endTime : ""),
+            ) +
+            "</span>";
+          html += "</div>";
+        }
+
+        if (work.location) {
+          html += '<div class="detail-row">';
+          html += '<span class="detail-label">สถานที่</span>';
+          html +=
+            '<span class="detail-value">' +
+            escapeHtml(work.location) +
+            "</span>";
+          html += "</div>";
+        }
+
+        if (work.workType) {
+          html += '<div class="detail-row">';
+          html += '<span class="detail-label">ประเภทงาน</span>';
+          html +=
+            '<span class="detail-value">' +
+            escapeHtml(work.workType) +
+            "</span>";
+          html += "</div>";
+        }
+
+        html += '<div class="detail-row">';
+        html += '<span class="detail-label">หัวข้อ</span>';
+        html +=
+          '<span class="detail-value">' +
+          escapeHtml(work.title || "-") +
+          "</span>";
+        html += "</div>";
+
+        html += '<div class="detail-row">';
+        html += '<span class="detail-label">รายละเอียด</span>';
+        html +=
+          '<span class="detail-value">' +
+          escapeHtml(work.description || "-") +
+          "</span>";
+        html += "</div>";
+
+        if (work.notes) {
+          html += '<div class="detail-row">';
+          html += '<span class="detail-label">หมายเหตุ</span>';
+          html +=
+            '<span class="detail-value">' + escapeHtml(work.notes) + "</span>";
+          html += "</div>";
+        }
+
+        html +=
+          '<div class="form-label" style="margin-top:16px;">หลักฐาน (' +
+          evidence.length +
+          ")</div>";
+        if (evidence.length === 0) {
+          html +=
+            '<div class="hint">ยังไม่มีหลักฐาน — กดปุ่ม "เพิ่มหลักฐาน" ด้านล่าง</div>';
+        } else {
+          html += '<div class="evidence-list">';
+          evidence.forEach(function (ev) {
+            const icon = ev.mimeType === "application/pdf" ? "📄" : "🖼️";
+            html += '<div class="evidence-item">';
+            html += '<div class="evidence-icon">' + icon + "</div>";
+            html += '<div class="evidence-info">';
+            html +=
+              '<div class="evidence-name">' +
+              escapeHtml(ev.fileName) +
+              "</div>";
+            html +=
+              '<div class="evidence-meta">' +
+              escapeHtml(ev.mimeType) +
+              "</div>";
+            html += "</div>";
+            if (ev.driveUrl) {
+              html +=
+                '<a href="' +
+                escapeHtml(ev.driveUrl) +
+                '" target="_blank" style="text-decoration:none;">↗</a>';
+            }
+            html += "</div>";
+          });
+          html += "</div>";
+        }
+
+        content.innerHTML = html;
+      }
+
+      function closeWorkDetail() {
+        document.getElementById("workDetailModal").classList.remove("open");
+        currentWork = null;
+      }
+
+      function openEditWork() {
+        if (!currentWork) return;
+        document.getElementById("editWorkIdLabel").textContent =
+          currentWork.workId;
+        document.getElementById("editWorkDate").value =
+          currentWork.workDate || "";
+        document.getElementById("editStartTime").value =
+          currentWork.startTime || "";
+        document.getElementById("editEndTime").value =
+          currentWork.endTime || "";
+        document.getElementById("editLocation").value =
+          currentWork.location || "";
+        document.getElementById("editWorkType").value =
+          currentWork.workType || "";
+        document.getElementById("editTitle").value = currentWork.title || "";
+        document.getElementById("editDescription").value =
+          currentWork.description || "";
+        document.getElementById("editNotes").value = currentWork.notes || "";
+        document.getElementById("editWorkModal").classList.add("open");
+      }
+
+      function closeEditWork() {
+        document.getElementById("editWorkModal").classList.remove("open");
+      }
+
+      async function saveEditWork() {
+        const btn = document.getElementById("btnEditWork");
+        btn.disabled = true;
+        btn.textContent = "กำลังบันทึก...";
+
+        const payload = {
+          workId: currentWork.workId,
+          workDate: document.getElementById("editWorkDate").value,
+          startTime: document.getElementById("editStartTime").value,
+          endTime: document.getElementById("editEndTime").value,
+          location: document.getElementById("editLocation").value.trim(),
+          workType: document.getElementById("editWorkType").value.trim(),
+          title: document.getElementById("editTitle").value.trim(),
+          description: document.getElementById("editDescription").value.trim(),
+          notes: document.getElementById("editNotes").value.trim(),
+        };
+
+        try {
+          const result = await callBackend("work.update", payload);
+          btn.disabled = false;
+          btn.textContent = "บันทึก";
+
+          if (result.success) {
+            closeEditWork();
+            openWorkDetail(currentWork.workId);
+            loadWorkHistory();
+          } else {
+            alert("บันทึกไม่สำเร็จ: " + result.error);
+          }
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = "บันทึก";
+          alert("เกิดข้อผิดพลาด: " + err.message);
+        }
+      }
+
+      function openHistoryEvidencePicker() {
+        if (!savedWorkId) {
+          alert("ไม่พบรหัสงาน");
+          return;
+        }
+        document.getElementById("evidenceCamera").click();
+      }
+
+      function escapeHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
       }
 
       if ("serviceWorker" in navigator) {
@@ -999,9 +1539,7 @@
         const hash = window.location.hash;
 
         if (hash.startsWith("#session=")) {
-          sessionToken = decodeURIComponent(
-            hash.substring("#session=".length)
-          );
+          sessionToken = decodeURIComponent(hash.substring("#session=".length));
           localStorage.setItem("kku_session_token", sessionToken);
           history.replaceState(null, "", window.location.pathname);
         }
