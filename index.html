@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a73e8">
+  <title>KKU Follow</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.svg">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; min-height: 100vh; padding-bottom: 80px; }
+    .screen { display: none; padding: 20px; min-height: calc(100vh - 80px); }
+    .screen.active { display: block; }
+    .login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; }
+    .login-screen.active { display: flex; }
+    .app-logo { font-size: 48px; margin-bottom: 20px; }
+    .app-title { font-size: 32px; font-weight: bold; color: #1a73e8; margin-bottom: 10px; }
+    .app-subtitle { font-size: 16px; color: #666; margin-bottom: 40px; }
+    #googleSignInBtn { width: 100%; max-width: 300px; }
+    .home-header { background: #1a73e8; color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
+    .user-name { font-size: 18px; font-weight: bold; }
+    .user-role { font-size: 14px; opacity: 0.9; }
+    .mic-button { width: 180px; height: 180px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; font-size: 64px; cursor: pointer; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4); margin: 40px auto; display: flex; align-items: center; justify-content: center; }
+    .mic-button:active { transform: scale(0.95); }
+    .mic-label { text-align: center; font-size: 18px; color: #666; margin-top: 20px; }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e0e0e0; display: flex; justify-content: space-around; padding: 8px 0; z-index: 100; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; padding: 8px 12px; cursor: pointer; color: #666; font-size: 12px; }
+    .nav-item.active { color: #1a73e8; }
+    .nav-icon { font-size: 24px; margin-bottom: 4px; }
+    .placeholder { text-align: center; padding: 60px 20px; color: #999; }
+    .placeholder-icon { font-size: 64px; margin-bottom: 20px; }
+    .loading { text-align: center; padding: 40px; }
+    .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #1a73e8; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .error-message { background: #ffebee; color: #c62828; padding: 16px; border-radius: 8px; margin: 20px 0; text-align: center; }
+    @media (min-width: 768px) { .screen { max-width: 600px; margin: 0 auto; } }
+  </style>
+</head>
+<body>
+  <div id="loginScreen" class="screen login-screen active">
+    <div class="app-logo">📋</div>
+    <div class="app-title">KKU Follow</div>
+    <div class="app-subtitle">ระบบบันทึกและติดตามงาน<br>สำหรับบุคลากร ม.ขอนแก่น</div>
+    <div id="googleSignInBtn"></div>
+    <div id="loginError" class="error-message" style="display: none;"></div>
+  </div>
+
+  <div id="homeScreen" class="screen">
+    <div class="home-header">
+      <div class="user-name" id="userName">Loading...</div>
+      <div class="user-role" id="userRole">User</div>
+    </div>
+    <button class="mic-button" onclick="startVoiceInput()">🎙️</button>
+    <div class="mic-label">แตะเพื่อพูดบันทึกงาน</div>
+  </div>
+
+  <div id="historyScreen" class="screen">
+    <div class="placeholder">
+      <div class="placeholder-icon">📜</div>
+      <h2>ประวัติงาน</h2>
+      <p>ฟีเจอร์นี้จะแสดงใน STEP 7</p>
+    </div>
+  </div>
+
+  <div id="problemsScreen" class="screen">
+    <div class="placeholder">
+      <div class="placeholder-icon">⚠️</div>
+      <h2>ปัญหา</h2>
+      <p>ฟีเจอร์นี้จะแสดงใน STEP 8</p>
+    </div>
+  </div>
+
+  <div id="knowledgeScreen" class="screen">
+    <div class="placeholder">
+      <div class="placeholder-icon">🔍</div>
+      <h2>ฐานความรู้</h2>
+      <p>ฟีเจอร์นี้จะแสดงใน STEP 8</p>
+    </div>
+  </div>
+
+  <div id="settingsScreen" class="screen">
+    <div class="placeholder">
+      <div class="placeholder-icon">⚙️</div>
+      <h2>ตั้งค่า</h2>
+      <p>ฟีเจอร์นี้จะแสดงใน STEP 7</p>
+    </div>
+  </div>
+
+  <nav class="bottom-nav" id="bottomNav" style="display: none;">
+    <div class="nav-item active" onclick="showScreen('home')">
+      <div class="nav-icon">🏠</div>
+      <div>หน้าแรก</div>
+    </div>
+    <div class="nav-item" onclick="showScreen('history')">
+      <div class="nav-icon">📜</div>
+      <div>ประวัติ</div>
+    </div>
+    <div class="nav-item" onclick="showScreen('problems')">
+      <div class="nav-icon">⚠️</div>
+      <div>ปัญหา</div>
+    </div>
+    <div class="nav-item" onclick="showScreen('knowledge')">
+      <div class="nav-icon">🔍</div>
+      <div>ความรู้</div>
+    </div>
+    <div class="nav-item" onclick="showScreen('settings')">
+      <div class="nav-icon">⚙️</div>
+      <div>ตั้งค่า</div>
+    </div>
+  </nav>
+
+  <div id="loadingScreen" class="screen" style="display: none;">
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>กำลังโหลด...</p>
+    </div>
+  </div>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    const GOOGLE_CLIENT_ID = '928908034346-e1isqsjdopuh9o8iitsdff33aghuujad.apps.googleusercontent.com';
+    const BACKEND_URL = 'https://script.google.com/a/macros/kku.ac.th/s/AKfycby4UiPfvv9uZXIfIaDKeP3Ua4LAMuB1Rpax9qP0jY3nKtgLv2w0O75GL-soP8sznh8/exec';
+    
+    let currentUser = null;
+    let idToken = null;
+
+    function initGoogleSignIn() {
+      google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleCredentialResponse
+      });
+
+      google.accounts.id.renderButton(
+        document.getElementById('googleSignInBtn'),
+        { theme: 'outline', size: 'large', type: 'standard', text: 'signin_with', shape: 'rectangular' }
+      );
+    }
+
+    async function handleCredentialResponse(response) {
+      idToken = response.credential;
+      showLoading();
+      
+      try {
+        const result = await callBackend('auth.login', { idToken: idToken });
+        
+        if (result.success) {
+          currentUser = result.data.user;
+          showHome();
+        } else {
+          showError(result.error);
+        }
+      } catch (err) {
+        showError('เกิดข้อผิดพลาด: ' + err.message);
+      }
+    }
+
+    async function callBackend(action, data) {
+      const response = await fetch(BACKEND_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, data })
+      });
+      return await response.json();
+    }
+
+    function showScreen(screenName) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      
+      const screenMap = {
+        'home': 'homeScreen',
+        'history': 'historyScreen',
+        'problems': 'problemsScreen',
+        'knowledge': 'knowledgeScreen',
+        'settings': 'settingsScreen'
+      };
+      
+      document.getElementById(screenMap[screenName]).classList.add('active');
+      
+      const navItems = document.querySelectorAll('.nav-item');
+      const navIndex = { 'home': 0, 'history': 1, 'problems': 2, 'knowledge': 3, 'settings': 4 };
+      navItems[navIndex[screenName]].classList.add('active');
+    }
+
+    function showLoading() {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('loadingScreen').style.display = 'block';
+    }
+
+    function showHome() {
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('loginScreen').classList.remove('active');
+      document.getElementById('homeScreen').classList.add('active');
+      document.getElementById('bottomNav').style.display = 'flex';
+      
+      document.getElementById('userName').textContent = currentUser.displayName;
+      document.getElementById('userRole').textContent = currentUser.role === 'super_admin' ? 'Super Admin' : 'User';
+    }
+
+    function showError(message) {
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('loginError').textContent = message;
+      document.getElementById('loginError').style.display = 'block';
+    }
+
+    function startVoiceInput() {
+      alert('ฟีเจอร์นี้จะแสดงใน STEP 5');
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(err => {
+        console.log('Service Worker registration failed:', err);
+      });
+    }
+
+    window.addEventListener('load', () => {
+      initGoogleSignIn();
+    });
+  </script>
+</body>
+</html>
