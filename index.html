@@ -1,633 +1,1018 @@
 <!DOCTYPE html>
 <html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#1a73e8">
-  <title>KKU Follow</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icons/icon-192.svg">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; min-height: 100vh; padding-bottom: 80px; }
-    .screen { display: none; padding: 20px; min-height: calc(100vh - 80px); }
-    .screen.active { display: block; }
-    .login-screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; }
-    .app-logo { font-size: 48px; margin-bottom: 20px; }
-    .app-title { font-size: 32px; font-weight: bold; color: #1a73e8; margin-bottom: 10px; }
-    .app-subtitle { font-size: 16px; color: #666; margin-bottom: 40px; }
-    #googleSignInBtn { width: 100%; max-width: 300px; min-height: 44px; }
-    .home-header { background: #1a73e8; color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
-    .user-name { font-size: 18px; font-weight: bold; }
-    .user-role { font-size: 14px; opacity: 0.9; }
-    .mic-button { width: 180px; height: 180px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; font-size: 64px; cursor: pointer; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4); margin: 40px auto; display: flex; align-items: center; justify-content: center; }
-    .mic-button:active { transform: scale(0.95); }
-    .mic-button.listening { background: linear-gradient(135deg, #e53935 0%, #c62828 100%); animation: pulse 1.2s infinite; }
-    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.5); } 50% { box-shadow: 0 0 0 18px rgba(229, 57, 53, 0); } }
-    .mic-label { text-align: center; font-size: 18px; color: #666; margin-top: 20px; }
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e0e0e0; display: flex; justify-content: space-around; padding: 8px 0; z-index: 100; }
-    .nav-item { display: flex; flex-direction: column; align-items: center; padding: 8px 12px; cursor: pointer; color: #666; font-size: 12px; }
-    .nav-item.active { color: #1a73e8; }
-    .nav-icon { font-size: 24px; margin-bottom: 4px; }
-    .placeholder { text-align: center; padding: 60px 20px; color: #999; }
-    .placeholder-icon { font-size: 64px; margin-bottom: 20px; }
-    .loading { text-align: center; padding: 40px; }
-    .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #1a73e8; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .error-message { background: #ffebee; color: #c62828; padding: 16px; border-radius: 8px; margin: 20px 0; text-align: center; }
-    .success-message { background: #e8f5e9; color: #2e7d32; padding: 16px; border-radius: 8px; margin: 20px 0; text-align: center; }
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: flex-end; justify-content: center; }
-    .modal-overlay.open { display: flex; }
-    .modal-sheet { background: white; width: 100%; max-width: 600px; border-radius: 20px 20px 0 0; padding: 24px 20px 32px; max-height: 90vh; overflow-y: auto; }
-    .modal-title { font-size: 20px; font-weight: bold; margin-bottom: 8px; text-align: center; }
-    .modal-sub { font-size: 14px; color: #666; margin-bottom: 16px; text-align: center; }
-    .form-group { margin-bottom: 14px; }
-    .form-label { display: block; font-size: 13px; color: #555; margin-bottom: 6px; font-weight: 600; }
-    .form-input, .form-textarea { width: 100%; border: 1px solid #ddd; border-radius: 10px; padding: 12px 14px; font-size: 16px; background: #fafafa; }
-    .form-textarea { min-height: 90px; resize: vertical; }
-    .form-input:focus, .form-textarea:focus { outline: none; border-color: #1a73e8; background: #fff; }
-    .btn-row { display: flex; gap: 10px; margin-top: 18px; }
-    .btn { flex: 1; border: none; border-radius: 12px; padding: 14px 16px; font-size: 16px; font-weight: 600; cursor: pointer; min-height: 48px; }
-    .btn-primary { background: #1a73e8; color: white; }
-    .btn-secondary { background: #e8eaf6; color: #3949ab; }
-    .btn-danger { background: #ffebee; color: #c62828; }
-    .btn:disabled { opacity: 0.6; }
-    .transcript-box { background: #f0f4ff; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 15px; color: #333; white-space: pre-wrap; }
-    .work-id-badge { display: inline-block; background: #e3f2fd; color: #1565c0; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 12px; }
-    .hint { font-size: 12px; color: #888; margin-top: 6px; }
-    @media (min-width: 768px) { .screen { max-width: 600px; margin: 0 auto; } .modal-overlay { align-items: center; } .modal-sheet { border-radius: 20px; margin: 20px; } }
-  </style>
-</head>
-<body>
-  <div id="loginScreen" class="screen login-screen active">
-    <div class="app-logo">📋</div>
-    <div class="app-title">KKU Follow</div>
-    <div class="app-subtitle">ระบบบันทึกและติดตามงาน<br>สำหรับบุคลากร ม.ขอนแก่น</div>
-    <div id="googleSignInBtn"></div>
-    <div id="loginError" class="error-message" style="display: none;"></div>
-  </div>
-
-  <div id="homeScreen" class="screen">
-    <div class="home-header">
-      <div class="user-name" id="userName">Loading...</div>
-      <div class="user-role" id="userRole">User</div>
-    </div>
-    <button class="mic-button" id="micButton" onclick="toggleVoiceInput()">🎙️</button>
-    <div class="mic-label" id="micLabel">แตะเพื่อพูดบันทึกงาน</div>
-    <div id="homeMessage" style="display:none; margin-top: 16px;"></div>
-  </div>
-
-  <div id="historyScreen" class="screen">
-    <div class="placeholder">
-      <div class="placeholder-icon">📜</div>
-      <h2>ประวัติงาน</h2>
-      <p>ฟีเจอร์นี้จะแสดงใน STEP 7</p>
-    </div>
-  </div>
-
-  <div id="problemsScreen" class="screen">
-    <div class="placeholder">
-      <div class="placeholder-icon">⚠️</div>
-      <h2>ปัญหา</h2>
-      <p>ฟีเจอร์นี้จะแสดงใน STEP 8</p>
-    </div>
-  </div>
-
-  <div id="knowledgeScreen" class="screen">
-    <div class="placeholder">
-      <div class="placeholder-icon">🔍</div>
-      <h2>ฐานความรู้</h2>
-      <p>ฟีเจอร์นี้จะแสดงใน STEP 8</p>
-    </div>
-  </div>
-
-  <div id="settingsScreen" class="screen">
-    <div class="placeholder">
-      <div class="placeholder-icon">⚙️</div>
-      <h2>ตั้งค่า</h2>
-      <p>ฟีเจอร์นี้จะแสดงใน STEP 7</p>
-    </div>
-  </div>
-
-  <nav class="bottom-nav" id="bottomNav" style="display: none;">
-    <div class="nav-item active" onclick="showScreen('home')">
-      <div class="nav-icon">🏠</div>
-      <div>หน้าแรก</div>
-    </div>
-    <div class="nav-item" onclick="showScreen('history')">
-      <div class="nav-icon">📜</div>
-      <div>ประวัติ</div>
-    </div>
-    <div class="nav-item" onclick="showScreen('problems')">
-      <div class="nav-icon">⚠️</div>
-      <div>ปัญหา</div>
-    </div>
-    <div class="nav-item" onclick="showScreen('knowledge')">
-      <div class="nav-icon">🔍</div>
-      <div>ความรู้</div>
-    </div>
-    <div class="nav-item" onclick="showScreen('settings')">
-      <div class="nav-icon">⚙️</div>
-      <div>ตั้งค่า</div>
-    </div>
-  </nav>
-
-  <div id="loadingScreen" class="screen" style="display: none;">
-    <div class="loading">
-      <div class="spinner"></div>
-      <p>กำลังโหลด...</p>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="confirmModal">
-    <div class="modal-sheet">
-      <div class="modal-title">ตรวจสอบข้อมูลงาน</div>
-      <div class="modal-sub">แก้ไขได้ก่อนยืนยันบันทึก</div>
-      <div class="form-label">ข้อความต้นฉบับ (Original Transcript)</div>
-      <div class="transcript-box" id="confirmTranscript"></div>
-      <div class="form-group">
-        <label class="form-label">วันที่</label>
-        <input type="date" class="form-input" id="fieldWorkDate">
-      </div>
-      <div class="form-group">
-        <label class="form-label">เวลาเริ่ม</label>
-        <input type="time" class="form-input" id="fieldStartTime">
-      </div>
-      <div class="form-group">
-        <label class="form-label">เวลาสิ้นสุด</label>
-        <input type="time" class="form-input" id="fieldEndTime">
-      </div>
-      <div class="form-group">
-        <label class="form-label">สถานที่</label>
-        <input type="text" class="form-input" id="fieldLocation" placeholder="เช่น ตึกอธิการ">
-      </div>
-      <div class="form-group">
-        <label class="form-label">ประเภทงาน</label>
-        <input type="text" class="form-input" id="fieldWorkType" placeholder="เช่น ถ่ายรูป / ประชุม / ซ่อม">
-      </div>
-      <div class="form-group">
-        <label class="form-label">หัวข้อ</label>
-        <input type="text" class="form-input" id="fieldTitle">
-      </div>
-      <div class="form-group">
-        <label class="form-label">รายละเอียดงาน</label>
-        <textarea class="form-textarea" id="fieldDescription"></textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">หมายเหตุ</label>
-        <input type="text" class="form-input" id="fieldNotes" placeholder="ไม่บังคับ">
-      </div>
-      <div class="hint">ระบบพยายามแยกข้อมูลให้อัตโนมัติ — ถ้าผิดให้แก้ก่อนกดยืนยัน</div>
-      <div class="btn-row">
-        <button class="btn btn-secondary" onclick="closeConfirmModal()">ยกเลิก</button>
-        <button class="btn btn-primary" id="btnSaveWork" onclick="confirmSaveWork()">ยืนยันบันทึก</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="successModal">
-    <div class="modal-sheet" style="text-align:center;">
-      <div style="font-size:48px; margin-bottom:12px;">✅</div>
-      <div class="modal-title">บันทึกงานสำเร็จ</div>
-      <div class="work-id-badge" id="successWorkId">WF-...</div>
-      <div class="modal-sub">สถานะ: Waiting Evidence<br>สามารถเพิ่มหลักฐานได้ใน STEP 6</div>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="closeSuccessModal()">ตกลง</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="textInputModal">
-    <div class="modal-sheet">
-      <div class="modal-title">พิมพ์บันทึกงาน</div>
-      <div class="modal-sub">ใช้เมื่อไมโครโฟนใช้ไม่ได้</div>
-      <div class="form-group">
-        <label class="form-label">พูด/พิมพ์รายละเอียดงาน</label>
-        <textarea class="form-textarea" id="manualTranscript" placeholder="เช่น มาถ่ายรูปที่ตึกอธิการ ครึ่งวัน 8.30 ถึง 12.00 น."></textarea>
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-secondary" onclick="closeTextInputModal()">ยกเลิก</button>
-        <button class="btn btn-primary" onclick="submitManualTranscript()">ถัดไป</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script>
-    const GOOGLE_CLIENT_ID = '928908034346-e1isqsjdopuh9o8iitsdff33aghuujad.apps.googleusercontent.com';
-    const BACKEND_URL = 'https://kku-follow.pongka.workers.dev';
-    const LOGIN_REDIRECT_URI = 'https://kku-follow.pongka.workers.dev/auth/callback';
-
-    let currentUser = null;
-    let idToken = null;
-    let recognition = null;
-    let isListening = false;
-    let currentTranscript = '';
-    let lastParsed = null;
-
-    function initGoogleSignIn() {
-      const state = 'st' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
-      localStorage.setItem('kku_auth_state', state);
-
-      google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: handleCredentialResponse,
-        ux_mode: 'redirect',
-        login_uri: LOGIN_REDIRECT_URI,
-        state: state
-      });
-
-      google.accounts.id.renderButton(
-        document.getElementById('googleSignInBtn'),
-        { theme: 'outline', size: 'large', type: 'standard', text: 'signin_with', shape: 'rectangular' }
-      );
-    }
-
-    async function handleCredentialResponse(response) {
-      idToken = response.credential;
-      showLoading();
-
-      try {
-        const result = await callBackend('auth.login', { idToken: idToken });
-        if (result.success) {
-          currentUser = result.data.user;
-          localStorage.setItem('kku_idToken', idToken);
-          showHome();
-        } else {
-          showError(result.error);
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#1a73e8" />
+    <title>KKU Follow</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="icons/icon-192.svg" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #f5f5f5;
+        color: #333;
+        min-height: 100vh;
+        padding-bottom: 80px;
+      }
+      .screen {
+        display: none;
+        padding: 20px;
+        min-height: calc(100vh - 80px);
+      }
+      .screen.active {
+        display: block;
+      }
+      .login-screen.active {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 40px 20px;
+      }
+      .app-logo {
+        font-size: 48px;
+        margin-bottom: 20px;
+      }
+      .app-title {
+        font-size: 32px;
+        font-weight: bold;
+        color: #1a73e8;
+        margin-bottom: 10px;
+      }
+      .app-subtitle {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 40px;
+      }
+      #googleSignInBtn {
+        width: 100%;
+        max-width: 300px;
+        min-height: 44px;
+      }
+      .home-header {
+        background: #1a73e8;
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .user-name {
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .user-role {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+      .mic-button {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        font-size: 64px;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        margin: 40px auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .mic-button:active {
+        transform: scale(0.95);
+      }
+      .mic-button.listening {
+        background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+        animation: pulse 1.2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.5);
         }
-      } catch (err) {
-        showError('เกิดข้อผิดพลาด: ' + err.message);
+        50% {
+          box-shadow: 0 0 0 18px rgba(229, 57, 53, 0);
+        }
       }
-    }
-
-    async function callBackend(action, data) {
-      const payload = Object.assign({}, data || {}, { idToken: idToken });
-      const response = await fetch(BACKEND_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: action, data: payload })
-      });
-
-      const text = await response.text();
-      try {
-        return JSON.parse(text);
-      } catch (e) {
-        throw new Error('เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (ไม่ใช่ JSON). ตรวจ Deploy Apps Script / Worker. รายละเอียด: ' + text.substring(0, 80));
+      .mic-label {
+        text-align: center;
+        font-size: 18px;
+        color: #666;
+        margin-top: 20px;
       }
-    }
+      .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-around;
+        padding: 8px 0;
+        z-index: 100;
+      }
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px 12px;
+        cursor: pointer;
+        color: #666;
+        font-size: 12px;
+      }
+      .nav-item.active {
+        color: #1a73e8;
+      }
+      .nav-icon {
+        font-size: 24px;
+        margin-bottom: 4px;
+      }
+      .placeholder {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+      }
+      .placeholder-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+      }
+      .loading {
+        text-align: center;
+        padding: 40px;
+      }
+      .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #1a73e8;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .error-message {
+        background: #ffebee;
+        color: #c62828;
+        padding: 16px;
+        border-radius: 8px;
+        margin: 20px 0;
+        text-align: center;
+      }
+      .success-message {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 16px;
+        border-radius: 8px;
+        margin: 20px 0;
+        text-align: center;
+      }
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 200;
+        align-items: flex-end;
+        justify-content: center;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+      .modal-sheet {
+        background: white;
+        width: 100%;
+        max-width: 600px;
+        border-radius: 20px 20px 0 0;
+        padding: 24px 20px 32px;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      .modal-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        text-align: center;
+      }
+      .modal-sub {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+      .form-group {
+        margin-bottom: 14px;
+      }
+      .form-label {
+        display: block;
+        font-size: 13px;
+        color: #555;
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+      .form-input,
+      .form-textarea {
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 16px;
+        background: #fafafa;
+      }
+      .form-textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+      .form-input:focus,
+      .form-textarea:focus {
+        outline: none;
+        border-color: #1a73e8;
+        background: #fff;
+      }
+      .btn-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+      }
+      .btn {
+        flex: 1;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 16px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        min-height: 48px;
+      }
+      .btn-primary {
+        background: #1a73e8;
+        color: white;
+      }
+      .btn-secondary {
+        background: #e8eaf6;
+        color: #3949ab;
+      }
+      .btn-danger {
+        background: #ffebee;
+        color: #c62828;
+      }
+      .btn:disabled {
+        opacity: 0.6;
+      }
+      .transcript-box {
+        background: #f0f4ff;
+        border-radius: 12px;
+        padding: 12px 14px;
+        margin-bottom: 14px;
+        font-size: 15px;
+        color: #333;
+        white-space: pre-wrap;
+      }
+      .work-id-badge {
+        display: inline-block;
+        background: #e3f2fd;
+        color: #1565c0;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      .hint {
+        font-size: 12px;
+        color: #888;
+        margin-top: 6px;
+      }
+      @media (min-width: 768px) {
+        .screen {
+          max-width: 600px;
+          margin: 0 auto;
+        }
+        .modal-overlay {
+          align-items: center;
+        }
+        .modal-sheet {
+          border-radius: 20px;
+          margin: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loginScreen" class="screen login-screen active">
+      <div class="app-logo">📋</div>
+      <div class="app-title">KKU Follow</div>
+      <div class="app-subtitle">
+        ระบบบันทึกและติดตามงาน<br />สำหรับบุคลากร ม.ขอนแก่น
+      </div>
+      <div id="googleSignInBtn"></div>
+      <div id="loginError" class="error-message" style="display: none"></div>
+    </div>
 
-    function showScreen(screenName) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    <div id="homeScreen" class="screen">
+      <div class="home-header">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role" id="userRole">User</div>
+      </div>
+      <button class="mic-button" id="micButton" onclick="toggleVoiceInput()">
+        🎙️
+      </button>
+      <div class="mic-label" id="micLabel">แตะเพื่อพูดบันทึกงาน</div>
+      <div id="homeMessage" style="display: none; margin-top: 16px"></div>
+    </div>
 
-      const screenMap = {
-        'home': 'homeScreen',
-        'history': 'historyScreen',
-        'problems': 'problemsScreen',
-        'knowledge': 'knowledgeScreen',
-        'settings': 'settingsScreen'
-      };
+    <div id="historyScreen" class="screen">
+      <div class="placeholder">
+        <div class="placeholder-icon">📜</div>
+        <h2>ประวัติงาน</h2>
+        <p>ฟีเจอร์นี้จะแสดงใน STEP 7</p>
+      </div>
+    </div>
 
-      document.getElementById(screenMap[screenName]).classList.add('active');
-      const navItems = document.querySelectorAll('.nav-item');
-      const navIndex = { 'home': 0, 'history': 1, 'problems': 2, 'knowledge': 3, 'settings': 4 };
-      navItems[navIndex[screenName]].classList.add('active');
-    }
+    <div id="problemsScreen" class="screen">
+      <div class="placeholder">
+        <div class="placeholder-icon">⚠️</div>
+        <h2>ปัญหา</h2>
+        <p>ฟีเจอร์นี้จะแสดงใน STEP 8</p>
+      </div>
+    </div>
 
-    function showLoading() {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById('loadingScreen').style.display = 'block';
-    }
+    <div id="knowledgeScreen" class="screen">
+      <div class="placeholder">
+        <div class="placeholder-icon">🔍</div>
+        <h2>ฐานความรู้</h2>
+        <p>ฟีเจอร์นี้จะแสดงใน STEP 8</p>
+      </div>
+    </div>
 
-    function showHome() {
-      document.getElementById('loadingScreen').style.display = 'none';
-      document.getElementById('loginScreen').classList.remove('active');
-      document.getElementById('homeScreen').classList.add('active');
-      document.getElementById('bottomNav').style.display = 'flex';
-      document.getElementById('userName').textContent = currentUser.displayName;
-      document.getElementById('userRole').textContent = currentUser.role === 'super_admin' ? 'Super Admin' : 'User';
-    }
+    <div id="settingsScreen" class="screen">
+      <div class="placeholder">
+        <div class="placeholder-icon">⚙️</div>
+        <h2>ตั้งค่า</h2>
+        <p>ฟีเจอร์นี้จะแสดงใน STEP 7</p>
+      </div>
+    </div>
 
-    function showError(message) {
-      document.getElementById('loadingScreen').style.display = 'none';
-      document.getElementById('loginError').textContent = message;
-      document.getElementById('loginError').style.display = 'block';
-    }
+    <nav class="bottom-nav" id="bottomNav" style="display: none">
+      <div class="nav-item active" onclick="showScreen('home')">
+        <div class="nav-icon">🏠</div>
+        <div>หน้าแรก</div>
+      </div>
+      <div class="nav-item" onclick="showScreen('history')">
+        <div class="nav-icon">📜</div>
+        <div>ประวัติ</div>
+      </div>
+      <div class="nav-item" onclick="showScreen('problems')">
+        <div class="nav-icon">⚠️</div>
+        <div>ปัญหา</div>
+      </div>
+      <div class="nav-item" onclick="showScreen('knowledge')">
+        <div class="nav-icon">🔍</div>
+        <div>ความรู้</div>
+      </div>
+      <div class="nav-item" onclick="showScreen('settings')">
+        <div class="nav-icon">⚙️</div>
+        <div>ตั้งค่า</div>
+      </div>
+    </nav>
 
-    function showHomeMessage(text, isError) {
-      const el = document.getElementById('homeMessage');
-      el.style.display = 'block';
-      el.className = isError ? 'error-message' : 'success-message';
-      el.textContent = text;
-    }
+    <div id="loadingScreen" class="screen" style="display: none">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>กำลังโหลด...</p>
+      </div>
+    </div>
 
-    function supportsSpeech() {
-      return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-    }
+    <div class="modal-overlay" id="confirmModal">
+      <div class="modal-sheet">
+        <div class="modal-title">ตรวจสอบข้อมูลงาน</div>
+        <div class="modal-sub">แก้ไขได้ก่อนยืนยันบันทึก</div>
+        <div class="form-label">ข้อความต้นฉบับ (Original Transcript)</div>
+        <div class="transcript-box" id="confirmTranscript"></div>
+        <div class="form-group">
+          <label class="form-label">วันที่</label>
+          <input type="date" class="form-input" id="fieldWorkDate" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">เวลาเริ่ม</label>
+          <input type="time" class="form-input" id="fieldStartTime" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">เวลาสิ้นสุด</label>
+          <input type="time" class="form-input" id="fieldEndTime" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">สถานที่</label>
+          <input
+            type="text"
+            class="form-input"
+            id="fieldLocation"
+            placeholder="เช่น ตึกอธิการ"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">ประเภทงาน</label>
+          <input
+            type="text"
+            class="form-input"
+            id="fieldWorkType"
+            placeholder="เช่น ถ่ายรูป / ประชุม / ซ่อม"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">หัวข้อ</label>
+          <input type="text" class="form-input" id="fieldTitle" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">รายละเอียดงาน</label>
+          <textarea class="form-textarea" id="fieldDescription"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">หมายเหตุ</label>
+          <input
+            type="text"
+            class="form-input"
+            id="fieldNotes"
+            placeholder="ไม่บังคับ"
+          />
+        </div>
+        <div class="hint">
+          ระบบพยายามแยกข้อมูลให้อัตโนมัติ — ถ้าผิดให้แก้ก่อนกดยืนยัน
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="closeConfirmModal()">
+            ยกเลิก
+          </button>
+          <button
+            class="btn btn-primary"
+            id="btnSaveWork"
+            onclick="confirmSaveWork()"
+          >
+            ยืนยันบันทึก
+          </button>
+        </div>
+      </div>
+    </div>
 
-    function initSpeechRecognition() {
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SR) return null;
+    <div class="modal-overlay" id="successModal">
+      <div class="modal-sheet" style="text-align: center">
+        <div style="font-size: 48px; margin-bottom: 12px">✅</div>
+        <div class="modal-title">บันทึกงานสำเร็จ</div>
+        <div class="work-id-badge" id="successWorkId">WF-...</div>
+        <div class="modal-sub">
+          ต้องการเพิ่มหลักฐานให้กับงานนี้ตอนนี้หรือไม่?
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="skipEvidence()">
+            แนบภายหลัง
+          </button>
+          <button class="btn btn-primary" onclick="openEvidencePicker()">
+            ถ่ายรูปตอนนี้
+          </button>
+        </div>
+      </div>
+    </div>
 
-      const rec = new SR();
-      rec.lang = 'th-TH';
-      rec.continuous = false;
-      rec.interimResults = true;
-      rec.maxAlternatives = 1;
+    <input
+      id="evidenceCamera"
+      type="file"
+      accept="image/jpeg,image/png,application/pdf"
+      capture="environment"
+      style="display: none"
+      onchange="uploadEvidence(this.files[0])"
+    />
 
-      rec.onstart = function () {
-        isListening = true;
-        document.getElementById('micButton').classList.add('listening');
-        document.getElementById('micLabel').textContent = 'กำลังฟัง... พูดได้เลย';
-      };
+    <div class="modal-overlay" id="textInputModal">
+      <div class="modal-sheet">
+        <div class="modal-title">พิมพ์บันทึกงาน</div>
+        <div class="modal-sub">ใช้เมื่อไมโครโฟนใช้ไม่ได้</div>
+        <div class="form-group">
+          <label class="form-label">พูด/พิมพ์รายละเอียดงาน</label>
+          <textarea
+            class="form-textarea"
+            id="manualTranscript"
+            placeholder="เช่น มาถ่ายรูปที่ตึกอธิการ ครึ่งวัน 8.30 ถึง 12.00 น."
+          ></textarea>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="closeTextInputModal()">
+            ยกเลิก
+          </button>
+          <button class="btn btn-primary" onclick="submitManualTranscript()">
+            ถัดไป
+          </button>
+        </div>
+      </div>
+    </div>
 
-      rec.onresult = function (event) {
-        let interim = '';
-        let finalText = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const t = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            finalText += t;
-          } else {
-            interim += t;
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+      const GOOGLE_CLIENT_ID =
+        '928908034346-e1isqsjdopuh9o8iitsdff33aghuujad.apps.googleusercontent.com';
+      const BACKEND_URL = 'https://kku-follow.pongka.workers.dev';
+      const LOGIN_REDIRECT_URI =
+        'https://kku-follow.pongka.workers.dev/auth/callback';
+
+      let currentUser = null;
+      let recognition = null;
+      let isListening = false;
+      let currentTranscript = '';
+      let lastParsed = null;
+      let savedWorkId = '';
+
+      function initGoogleSignIn() {
+        google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          ux_mode: 'redirect',
+          login_uri: LOGIN_REDIRECT_URI,
+        });
+
+        google.accounts.id.renderButton(
+          document.getElementById('googleSignInBtn'),
+          {
+            theme: 'outline',
+            size: 'large',
+            type: 'standard',
+            text: 'signin_with',
+            shape: 'rectangular',
+          }
+        );
+      }
+
+      async function callBackend(action, data) {
+        const response = await fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ action: action, data: data || {} }),
+        });
+
+        const text = await response.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error(
+            'เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (ไม่ใช่ JSON). ตรวจ Deploy Apps Script / Worker. รายละเอียด: ' +
+              text.substring(0, 80)
+          );
+        }
+      }
+
+      function showScreen(screenName) {
+        document
+          .querySelectorAll('.screen')
+          .forEach(s => s.classList.remove('active'));
+        document
+          .querySelectorAll('.nav-item')
+          .forEach(n => n.classList.remove('active'));
+
+        const screenMap = {
+          home: 'homeScreen',
+          history: 'historyScreen',
+          problems: 'problemsScreen',
+          knowledge: 'knowledgeScreen',
+          settings: 'settingsScreen',
+        };
+
+        document.getElementById(screenMap[screenName]).classList.add('active');
+        const navItems = document.querySelectorAll('.nav-item');
+        const navIndex = {
+          home: 0,
+          history: 1,
+          problems: 2,
+          knowledge: 3,
+          settings: 4,
+        };
+        navItems[navIndex[screenName]].classList.add('active');
+      }
+
+      function showLoading() {
+        document
+          .querySelectorAll('.screen')
+          .forEach(s => s.classList.remove('active'));
+        document.getElementById('loadingScreen').style.display = 'block';
+      }
+
+      function showHome() {
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('loginScreen').classList.remove('active');
+        document.getElementById('homeScreen').classList.add('active');
+        document.getElementById('bottomNav').style.display = 'flex';
+        document.getElementById('userName').textContent =
+          currentUser.displayName;
+        document.getElementById('userRole').textContent =
+          currentUser.role === 'super_admin' ? 'Super Admin' : 'User';
+      }
+
+      function showError(message) {
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('loginError').textContent = message;
+        document.getElementById('loginError').style.display = 'block';
+      }
+
+      function showHomeMessage(text, isError) {
+        const el = document.getElementById('homeMessage');
+        el.style.display = 'block';
+        el.className = isError ? 'error-message' : 'success-message';
+        el.textContent = text;
+      }
+
+      function supportsSpeech() {
+        return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+      }
+
+      function initSpeechRecognition() {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) return null;
+
+        const rec = new SR();
+        rec.lang = 'th-TH';
+        rec.continuous = false;
+        rec.interimResults = true;
+        rec.maxAlternatives = 1;
+
+        rec.onstart = function () {
+          isListening = true;
+          document.getElementById('micButton').classList.add('listening');
+          document.getElementById('micLabel').textContent =
+            'กำลังฟัง... พูดได้เลย';
+        };
+
+        rec.onresult = function (event) {
+          let interim = '';
+          let finalText = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const t = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+              finalText += t;
+            } else {
+              interim += t;
+            }
+          }
+          if (finalText) {
+            currentTranscript = (currentTranscript + ' ' + finalText).trim();
+          }
+          document.getElementById('micLabel').textContent =
+            interim || currentTranscript || 'กำลังฟัง...';
+        };
+
+        rec.onerror = function (event) {
+          isListening = false;
+          document.getElementById('micButton').classList.remove('listening');
+          document.getElementById('micLabel').textContent =
+            'แตะเพื่อพูดบันทึกงาน';
+          if (event.error === 'not-allowed') {
+            showHomeMessage('ไม่อนุญาตใช้ไมโครโฟน — ใช้พิมพ์แทนได้', true);
+            openTextInputModal();
+          } else if (event.error !== 'aborted' && event.error !== 'no-speech') {
+            showHomeMessage(
+              'ไมโครโฟนมีปัญหา (' + event.error + ') — ใช้พิมพ์แทนได้',
+              true
+            );
+            openTextInputModal();
+          }
+        };
+
+        rec.onend = function () {
+          isListening = false;
+          document.getElementById('micButton').classList.remove('listening');
+          document.getElementById('micLabel').textContent =
+            'แตะเพื่อพูดบันทึกงาน';
+          if (currentTranscript && currentTranscript.trim()) {
+            openConfirmModal(currentTranscript.trim());
+          }
+        };
+
+        return rec;
+      }
+
+      function toggleVoiceInput() {
+        if (!supportsSpeech()) {
+          showHomeMessage('เบราว์เซอร์นี้ไม่รองรับเสียง — ใช้พิมพ์แทน', true);
+          openTextInputModal();
+          return;
+        }
+
+        if (!recognition) {
+          recognition = initSpeechRecognition();
+        }
+
+        if (isListening) {
+          recognition.stop();
+          return;
+        }
+
+        currentTranscript = '';
+        try {
+          recognition.start();
+        } catch (e) {
+          openTextInputModal();
+        }
+      }
+
+      function openTextInputModal() {
+        document.getElementById('manualTranscript').value = '';
+        document.getElementById('textInputModal').classList.add('open');
+      }
+
+      function closeTextInputModal() {
+        document.getElementById('textInputModal').classList.remove('open');
+      }
+
+      function submitManualTranscript() {
+        const text = document.getElementById('manualTranscript').value.trim();
+        if (!text) {
+          alert('กรุณากรอกรายละเอียดงาน');
+          return;
+        }
+        closeTextInputModal();
+        openConfirmModal(text);
+      }
+
+      function parseWorkFromText(text) {
+        const result = {
+          originalTranscript: text,
+          workDate: todayISO(),
+          startTime: '',
+          endTime: '',
+          location: '',
+          workType: '',
+          title: '',
+          description: text,
+          notes: '',
+        };
+
+        const dateMatch = text.match(
+          /(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?/
+        );
+        if (dateMatch) {
+          const d = parseInt(dateMatch[1], 10);
+          const m = parseInt(dateMatch[2], 10);
+          let y = dateMatch[3]
+            ? parseInt(dateMatch[3], 10)
+            : new Date().getFullYear();
+          if (y < 100) y += 2000;
+          if (y > 2500) y -= 543;
+          result.workDate = y + '-' + pad2(m) + '-' + pad2(d);
+        } else if (/วันนี้/.test(text)) {
+          result.workDate = todayISO();
+        } else if (/เมื่อวาน/.test(text)) {
+          const d = new Date();
+          d.setDate(d.getDate() - 1);
+          result.workDate = toISODate(d);
+        }
+
+        const timeRange = text.match(
+          /(\d{1,2})[\.:](\d{2})\s*(?:น\.?)?\s*(?:ถึง|-|–|—)\s*(\d{1,2})[\.:](\d{2})/
+        );
+        if (timeRange) {
+          result.startTime = pad2(timeRange[1]) + ':' + timeRange[2];
+          result.endTime = pad2(timeRange[3]) + ':' + timeRange[4];
+        } else {
+          const singleTime = text.match(
+            /(?:เวลา|ตี|โมง)?\s*(\d{1,2})[\.:](\d{2})\s*(?:น\.?)?/
+          );
+          if (singleTime) {
+            result.startTime = pad2(singleTime[1]) + ':' + singleTime[2];
+          }
+          if (/เช้า|ครึ่งวันเช้า/.test(text) && !result.startTime) {
+            result.startTime = '08:30';
+            result.endTime = '12:00';
+          }
+          if (/บ่าย|ครึ่งวันบ่าย/.test(text) && !result.endTime) {
+            result.startTime = result.startTime || '13:00';
+            result.endTime = '16:30';
+          }
+          if (/ทั้งวัน|เต็มวัน/.test(text)) {
+            result.startTime = result.startTime || '08:30';
+            result.endTime = '16:30';
           }
         }
-        if (finalText) {
-          currentTranscript = (currentTranscript + ' ' + finalText).trim();
+
+        const locMatch = text.match(
+          /(?:ที่|ที่\s*)((?:ตึก|อาคาร|ห้อง|คณะ|สำนัก|ศูนย์|ชั้น)[^\s,]+(?:\s+[^\s,]+){0,3})/
+        );
+        if (locMatch) {
+          result.location = locMatch[1]
+            .replace(/\s+(ครึ่งวัน|เช้า|บ่าย|เวลา|ถึง).*$/, '')
+            .trim();
         }
-        document.getElementById('micLabel').textContent = interim || currentTranscript || 'กำลังฟัง...';
-      };
 
-      rec.onerror = function (event) {
-        isListening = false;
-        document.getElementById('micButton').classList.remove('listening');
-        document.getElementById('micLabel').textContent = 'แตะเพื่อพูดบันทึกงาน';
-        if (event.error === 'not-allowed') {
-          showHomeMessage('ไม่อนุญาตใช้ไมโครโฟน — ใช้พิมพ์แทนได้', true);
-          openTextInputModal();
-        } else if (event.error !== 'aborted' && event.error !== 'no-speech') {
-          showHomeMessage('ไมโครโฟนมีปัญหา (' + event.error + ') — ใช้พิมพ์แทนได้', true);
-          openTextInputModal();
-        }
-      };
+        if (/ถ่ายรูป|ถ่ายภาพ|ถ่าย/.test(text)) result.workType = 'ถ่ายรูป';
+        else if (/ประชุม/.test(text)) result.workType = 'ประชุม';
+        else if (/ซ่อม|แก้ไข|แก้ปัญหา/.test(text))
+          result.workType = 'ซ่อม/แก้ไข';
+        else if (/อบรม|ฝึก/.test(text)) result.workType = 'อบรม';
+        else if (/จัดเตรียม|เซ็ตอัพ|setup/i.test(text))
+          result.workType = 'จัดเตรียม';
 
-      rec.onend = function () {
-        isListening = false;
-        document.getElementById('micButton').classList.remove('listening');
-        document.getElementById('micLabel').textContent = 'แตะเพื่อพูดบันทึกงาน';
-        if (currentTranscript && currentTranscript.trim()) {
-          openConfirmModal(currentTranscript.trim());
-        }
-      };
+        let title = text;
+        if (result.location) title = title.replace(result.location, '').trim();
+        title = title
+          .replace(/\d{1,2}[\.:]\d{2}/g, '')
+          .replace(
+            /ถึง|ครึ่งวัน|เช้า|บ่าย|ทั้งวัน|เต็มวัน|วันนี้|เมื่อวาน/g,
+            ' '
+          );
+        title = title.replace(/\s+/g, ' ').trim();
+        if (title.length > 60) title = title.substring(0, 60) + '...';
+        result.title = title || result.workType || 'งานบันทึกด้วยเสียง';
 
-      return rec;
-    }
-
-    function toggleVoiceInput() {
-      if (!supportsSpeech()) {
-        showHomeMessage('เบราว์เซอร์นี้ไม่รองรับเสียง — ใช้พิมพ์แทน', true);
-        openTextInputModal();
-        return;
+        return result;
       }
 
-      if (!recognition) {
-        recognition = initSpeechRecognition();
+      function todayISO() {
+        return toISODate(new Date());
       }
 
-      if (isListening) {
-        recognition.stop();
-        return;
+      function toISODate(d) {
+        return (
+          d.getFullYear() +
+          '-' +
+          pad2(d.getMonth() + 1) +
+          '-' +
+          pad2(d.getDate())
+        );
       }
 
-      currentTranscript = '';
-      try {
-        recognition.start();
-      } catch (e) {
-        openTextInputModal();
-      }
-    }
-
-    function openTextInputModal() {
-      document.getElementById('manualTranscript').value = '';
-      document.getElementById('textInputModal').classList.add('open');
-    }
-
-    function closeTextInputModal() {
-      document.getElementById('textInputModal').classList.remove('open');
-    }
-
-    function submitManualTranscript() {
-      const text = document.getElementById('manualTranscript').value.trim();
-      if (!text) {
-        alert('กรุณากรอกรายละเอียดงาน');
-        return;
-      }
-      closeTextInputModal();
-      openConfirmModal(text);
-    }
-
-    function parseWorkFromText(text) {
-      const result = {
-        originalTranscript: text,
-        workDate: todayISO(),
-        startTime: '',
-        endTime: '',
-        location: '',
-        workType: '',
-        title: '',
-        description: text,
-        notes: ''
-      };
-
-      const dateMatch = text.match(/(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?/);
-      if (dateMatch) {
-        const d = parseInt(dateMatch[1], 10);
-        const m = parseInt(dateMatch[2], 10);
-        let y = dateMatch[3] ? parseInt(dateMatch[3], 10) : new Date().getFullYear();
-        if (y < 100) y += 2000;
-        if (y > 2500) y -= 543;
-        result.workDate = y + '-' + pad2(m) + '-' + pad2(d);
-      } else if (/วันนี้/.test(text)) {
-        result.workDate = todayISO();
-      } else if (/เมื่อวาน/.test(text)) {
-        const d = new Date();
-        d.setDate(d.getDate() - 1);
-        result.workDate = toISODate(d);
+      function pad2(n) {
+        return String(n).padStart(2, '0');
       }
 
-      const timeRange = text.match(/(\d{1,2})[\.:](\d{2})\s*(?:น\.?)?\s*(?:ถึง|-|–|—)\s*(\d{1,2})[\.:](\d{2})/);
-      if (timeRange) {
-        result.startTime = pad2(timeRange[1]) + ':' + timeRange[2];
-        result.endTime = pad2(timeRange[3]) + ':' + timeRange[4];
-      } else {
-        const singleTime = text.match(/(?:เวลา|ตี|โมง)?\s*(\d{1,2})[\.:](\d{2})\s*(?:น\.?)?/);
-        if (singleTime) {
-          result.startTime = pad2(singleTime[1]) + ':' + singleTime[2];
-        }
-        if (/เช้า|ครึ่งวันเช้า/.test(text) && !result.startTime) {
-          result.startTime = '08:30';
-          result.endTime = '12:00';
-        }
-        if (/บ่าย|ครึ่งวันบ่าย/.test(text) && !result.endTime) {
-          result.startTime = result.startTime || '13:00';
-          result.endTime = '16:30';
-        }
-        if (/ทั้งวัน|เต็มวัน/.test(text)) {
-          result.startTime = result.startTime || '08:30';
-          result.endTime = result.endTime || '16:30';
+      function openConfirmModal(transcript) {
+        lastParsed = parseWorkFromText(transcript);
+        document.getElementById('confirmTranscript').textContent = transcript;
+        document.getElementById('fieldWorkDate').value =
+          lastParsed.workDate || todayISO();
+        document.getElementById('fieldStartTime').value =
+          lastParsed.startTime || '';
+        document.getElementById('fieldEndTime').value =
+          lastParsed.endTime || '';
+        document.getElementById('fieldLocation').value =
+          lastParsed.location || '';
+        document.getElementById('fieldWorkType').value =
+          lastParsed.workType || '';
+        document.getElementById('fieldTitle').value = lastParsed.title || '';
+        document.getElementById('fieldDescription').value =
+          lastParsed.description || transcript;
+        document.getElementById('fieldNotes').value = '';
+        document.getElementById('confirmModal').classList.add('open');
+      }
+
+      function closeConfirmModal() {
+        document.getElementById('confirmModal').classList.remove('open');
+        currentTranscript = '';
+      }
+
+      async function confirmSaveWork() {
+        const btn = document.getElementById('btnSaveWork');
+        btn.disabled = true;
+        btn.textContent = 'กำลังบันทึก...';
+
+        const payload = {
+          originalTranscript:
+            document.getElementById('confirmTranscript').textContent,
+          workDate: document.getElementById('fieldWorkDate').value,
+          startTime: document.getElementById('fieldStartTime').value,
+          endTime: document.getElementById('fieldEndTime').value,
+          location: document.getElementById('fieldLocation').value.trim(),
+          workType: document.getElementById('fieldWorkType').value.trim(),
+          title: document.getElementById('fieldTitle').value.trim(),
+          description: document.getElementById('fieldDescription').value.trim(),
+          notes: document.getElementById('fieldNotes').value.trim(),
+        };
+
+        try {
+          const result = await callBackend('work.create', payload);
+          btn.disabled = false;
+          btn.textContent = 'ยืนยันบันทึก';
+
+          if (result.success) {
+            closeConfirmModal();
+            savedWorkId = result.data.work.workId;
+            document.getElementById('successWorkId').textContent =
+              result.data.work.workId;
+            document.getElementById('successModal').classList.add('open');
+          } else {
+            alert('บันทึกไม่สำเร็จ: ' + result.error);
+          }
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = 'ยืนยันบันทึก';
+          alert('เกิดข้อผิดพลาด: ' + err.message);
         }
       }
 
-      const locMatch = text.match(/(?:ที่|ที่\s*)((?:ตึก|อาคาร|ห้อง|คณะ|สำนัก|ศูนย์|ชั้น)[^\s,]+(?:\s+[^\s,]+){0,3})/);
-      if (locMatch) {
-        result.location = locMatch[1].replace(/\s+(ครึ่งวัน|เช้า|บ่าย|เวลา|ถึง).*$/, '').trim();
+      function skipEvidence() {
+        document.getElementById('successModal').classList.remove('open');
+        showHomeMessage(
+          'บันทึกงานเรียบร้อย สถานะ Waiting Evidence คุณสามารถกลับมาแนบรูปได้ภายหลัง',
+          false
+        );
       }
 
-      if (/ถ่ายรูป|ถ่ายภาพ|ถ่าย/.test(text)) result.workType = 'ถ่ายรูป';
-      else if (/ประชุม/.test(text)) result.workType = 'ประชุม';
-      else if (/ซ่อม|แก้ไข|แก้ปัญหา/.test(text)) result.workType = 'ซ่อม/แก้ไข';
-      else if (/อบรม|ฝึก/.test(text)) result.workType = 'อบรม';
-      else if (/จัดเตรียม|เซ็ตอัพ|setup/i.test(text)) result.workType = 'จัดเตรียม';
-
-      let title = text;
-      if (result.location) title = title.replace(result.location, '').trim();
-      title = title.replace(/\d{1,2}[\.:]\d{2}/g, '').replace(/ถึง|ครึ่งวัน|เช้า|บ่าย|ทั้งวัน|เต็มวัน|วันนี้|เมื่อวาน/g, ' ');
-      title = title.replace(/\s+/g, ' ').trim();
-      if (title.length > 60) title = title.substring(0, 60) + '...';
-      result.title = title || result.workType || 'งานบันทึกด้วยเสียง';
-
-      return result;
-    }
-
-    function todayISO() {
-      return toISODate(new Date());
-    }
-
-    function toISODate(d) {
-      return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
-    }
-
-    function pad2(n) {
-      return String(n).padStart(2, '0');
-    }
-
-    function openConfirmModal(transcript) {
-      lastParsed = parseWorkFromText(transcript);
-      document.getElementById('confirmTranscript').textContent = transcript;
-      document.getElementById('fieldWorkDate').value = lastParsed.workDate || todayISO();
-      document.getElementById('fieldStartTime').value = lastParsed.startTime || '';
-      document.getElementById('fieldEndTime').value = lastParsed.endTime || '';
-      document.getElementById('fieldLocation').value = lastParsed.location || '';
-      document.getElementById('fieldWorkType').value = lastParsed.workType || '';
-      document.getElementById('fieldTitle').value = lastParsed.title || '';
-      document.getElementById('fieldDescription').value = lastParsed.description || transcript;
-      document.getElementById('fieldNotes').value = '';
-      document.getElementById('confirmModal').classList.add('open');
-    }
-
-    function closeConfirmModal() {
-      document.getElementById('confirmModal').classList.remove('open');
-      currentTranscript = '';
-    }
-
-    async function confirmSaveWork() {
-      const btn = document.getElementById('btnSaveWork');
-      btn.disabled = true;
-      btn.textContent = 'กำลังบันทึก...';
-
-      const payload = {
-        originalTranscript: document.getElementById('confirmTranscript').textContent,
-        workDate: document.getElementById('fieldWorkDate').value,
-        startTime: document.getElementById('fieldStartTime').value,
-        endTime: document.getElementById('fieldEndTime').value,
-        location: document.getElementById('fieldLocation').value.trim(),
-        workType: document.getElementById('fieldWorkType').value.trim(),
-        title: document.getElementById('fieldTitle').value.trim(),
-        description: document.getElementById('fieldDescription').value.trim(),
-        notes: document.getElementById('fieldNotes').value.trim(),
-        status: 'waiting_evidence'
-      };
-
-      try {
-        const result = await callBackend('work.create', payload);
-        btn.disabled = false;
-        btn.textContent = 'ยืนยันบันทึก';
-
-        if (result.success) {
-          closeConfirmModal();
-          document.getElementById('successWorkId').textContent = result.data.work.workId;
-          document.getElementById('successModal').classList.add('open');
-        } else {
-          alert('บันทึกไม่สำเร็จ: ' + result.error);
+      function openEvidencePicker() {
+        if (!savedWorkId) {
+          alert('ไม่พบรหัสงาน กรุณาลองบันทึกใหม่');
+          return;
         }
-      } catch (err) {
-        btn.disabled = false;
-        btn.textContent = 'ยืนยันบันทึก';
-        alert('เกิดข้อผิดพลาด: ' + err.message);
+        document.getElementById('evidenceCamera').click();
       }
-    }
 
-    function closeSuccessModal() {
-      document.getElementById('successModal').classList.remove('open');
-      showHomeMessage('บันทึกงานเรียบร้อย — ดูได้ในประวัติ (STEP 7)', false);
-    }
+      function uploadEvidence(file) {
+        if (!file) return;
+        const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+        const maxBytes = 5 * 1024 * 1024;
+        if (!allowedTypes.includes(file.type)) {
+          alert('รองรับเฉพาะไฟล์ JPG, PNG และ PDF');
+          return;
+        }
+        if (file.size > maxBytes) {
+          alert('ไฟล์มีขนาดเกิน 5 MB กรุณาเลือกไฟล์ใหม่');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onerror = function () {
+          alert('ไม่สามารถอ่านไฟล์ได้ กรุณาลองใหม่');
+        };
+        reader.onload = async function () {
+          try {
+            const result = await callBackend('evidence.upload', {
+              workId: savedWorkId,
+              fileName: file.name,
+              mimeType: file.type,
+              base64Data: String(reader.result).split(',')[1],
+            });
+            if (!result.success) throw new Error(result.error);
+            document.getElementById('successModal').classList.remove('open');
+            showHomeMessage(
+              'อัปโหลดหลักฐานสำเร็จและตรวจพบไฟล์จริงใน Google Drive แล้ว',
+              false
+            );
+          } catch (err) {
+            alert(
+              'Upload Failed: ' +
+                err.message +
+                '\nคุณสามารถลองใหม่ได้ทันที'
+            );
+          } finally {
+            document.getElementById('evidenceCamera').value = '';
+          }
+        };
+        reader.readAsDataURL(file);
+      }
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(function () {});
-    }
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(function () {});
+      }
 
-    window.addEventListener('load', function () {
-      const hash = window.location.hash;
+      window.addEventListener('load', function () {
+        const hash = window.location.hash;
 
-      if (hash.startsWith('#credential=')) {
-        const hashParams = new URLSearchParams(hash.substring(1));
-        const credential = hashParams.get('credential');
-        const returnedState = hashParams.get('state');
-        const savedState = localStorage.getItem('kku_auth_state');
-        localStorage.removeItem('kku_auth_state');
-        history.replaceState(null, '', window.location.pathname);
-
-        if (!returnedState || returnedState !== savedState) {
-          showError('เข้าสู่ระบบไม่สำเร็จ (state ไม่ตรงกัน) กรุณาลองใหม่');
+        if (hash.startsWith('#error=')) {
+          const errCode = hash.substring('#error='.length);
+          history.replaceState(null, '', window.location.pathname);
+          showError('เข้าสู่ระบบไม่สำเร็จ (' + errCode + ') กรุณาลองใหม่');
           initGoogleSignIn();
           return;
         }
 
-        handleCredentialResponse({ credential: credential });
-        return;
-      }
-
-      if (hash.startsWith('#error=')) {
-        const errCode = hash.substring('#error='.length);
-        history.replaceState(null, '', window.location.pathname);
-        showError('เข้าสู่ระบบไม่สำเร็จ (' + errCode + ') กรุณาลองใหม่');
-        initGoogleSignIn();
-        return;
-      }
-
-      const savedToken = localStorage.getItem('kku_idToken');
-      if (savedToken) {
-        idToken = savedToken;
         showLoading();
-        callBackend('auth.me', {}).then(function (result) {
-          if (result.success) {
-            currentUser = result.data.user;
-            showHome();
-          } else {
-            localStorage.removeItem('kku_idToken');
+        callBackend('auth.me', {})
+          .then(function (result) {
+            if (result.success) {
+              currentUser = result.data.user;
+              showHome();
+            } else {
+              document.getElementById('loadingScreen').style.display = 'none';
+              initGoogleSignIn();
+            }
+          })
+          .catch(function () {
             document.getElementById('loadingScreen').style.display = 'none';
             initGoogleSignIn();
-          }
-        }).catch(function () {
-          document.getElementById('loadingScreen').style.display = 'none';
-          initGoogleSignIn();
-        });
-        return;
-      }
-
-      initGoogleSignIn();
-    });
-  </script>
-</body>
+          });
+      });
+    </script>
+  </body>
 </html>
