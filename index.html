@@ -268,7 +268,13 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: action, data: payload })
       });
-      return await response.json();
+
+      const text = await response.text();
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        throw new Error('เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (ไม่ใช่ JSON). ตรวจ Deploy Apps Script / Worker. รายละเอียด: ' + text.substring(0, 80));
+      }
     }
 
     function showScreen(screenName) {
