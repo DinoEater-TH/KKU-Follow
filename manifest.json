@@ -2,7 +2,8 @@
   "name": "KKU Follow",
   "short_name": "KKU Follow",
   "description": "ระบบบันทึกและติดตามงานสำหรับบุคลากร ม.ขอนแก่น",
-  "start_url": "/KKKU-Follw/",
+  "start_url": "/KKU-Follow/",
+  "scope": "/KKU-Follow/",
   "display": "standalone",
   "background_color": "#f5f5f5",
   "theme_color": "#1a73e8",
@@ -11,12 +12,14 @@
     {
       "src": "icons/icon-192.svg",
       "sizes": "192x192",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any"
     },
     {
       "src": "icons/icon-512.svg",
       "sizes": "512x512",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ]
 }

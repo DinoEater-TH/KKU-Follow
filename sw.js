@@ -1,16 +1,17 @@
-const CACHE_NAME = 'kku-follow-v1';
+const CACHE_NAME = 'kku-follow-v2';
 const urlsToCache = [
-  '/KKKU-Follw/',
-  '/KKKU-Follw/index.html',
-  '/KKKU-Follw/manifest.json',
-  '/KKKU-Follw/icons/icon-192.svg',
-  '/KKKU-Follw/icons/icon-512.svg'
+  '/KKU-Follow/',
+  '/KKU-Follow/index.html',
+  '/KKU-Follow/manifest.json',
+  '/KKU-Follow/icons/icon-192.svg',
+  '/KKU-Follow/icons/icon-512.svg'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -36,6 +37,6 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
