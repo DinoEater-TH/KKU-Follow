@@ -76,6 +76,15 @@
         font-size: 14px;
         opacity: 0.9;
       }
+      .user-exp {
+        font-size: 13px;
+        margin-top: 6px;
+        opacity: 0.95;
+        background: rgba(255, 255, 255, 0.2);
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+      }
       .mic-button {
         width: 180px;
         height: 180px;
@@ -113,6 +122,29 @@
         color: #666;
         margin-top: 20px;
       }
+      .home-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 24px;
+      }
+      .home-action-btn {
+        flex: 1;
+        border: none;
+        border-radius: 12px;
+        padding: 14px;
+        font-size: 15px;
+        font-weight: 600;
+        min-height: 48px;
+        cursor: pointer;
+      }
+      .home-action-btn.problem {
+        background: #fff3e0;
+        color: #e65100;
+      }
+      .home-action-btn.knowledge {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
       .bottom-nav {
         position: fixed;
         bottom: 0;
@@ -140,15 +172,6 @@
       .nav-icon {
         font-size: 24px;
         margin-bottom: 4px;
-      }
-      .placeholder {
-        text-align: center;
-        padding: 60px 20px;
-        color: #999;
-      }
-      .placeholder-icon {
-        font-size: 64px;
-        margin-bottom: 20px;
       }
       .loading {
         text-align: center;
@@ -272,9 +295,13 @@
         background: #e8eaf6;
         color: #3949ab;
       }
-      .btn-danger {
-        background: #ffebee;
-        color: #c62828;
+      .btn-success {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+      .btn-warn {
+        background: #fff3e0;
+        color: #e65100;
       }
       .btn:disabled {
         opacity: 0.6;
@@ -303,69 +330,36 @@
         color: #888;
         margin-top: 6px;
       }
-      .category-toggle {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 14px;
-      }
-      .category-btn {
-        flex: 1;
-        border: 2px solid #ddd;
-        border-radius: 12px;
-        padding: 10px 14px;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        background: #fafafa;
-        color: #666;
-        text-align: center;
-        transition: all 0.2s;
-      }
-      .category-btn.active-work {
-        border-color: #1a73e8;
-        background: #e3f2fd;
-        color: #1565c0;
-      }
-      .category-btn.active-problem {
-        border-color: #c62828;
-        background: #ffebee;
-        color: #c62828;
-      }
-      .category-btn:active {
-        transform: scale(0.97);
-      }
-      .auto-detect-badge {
-        display: inline-block;
-        background: #fff3e0;
-        color: #e65100;
-        padding: 2px 8px;
-        border-radius: 10px;
-        font-size: 11px;
-        margin-left: 6px;
-      }
-
-      /* === History Page Styles === */
       .screen-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         margin-bottom: 16px;
+        gap: 8px;
       }
       .screen-title {
         font-size: 22px;
         font-weight: bold;
       }
-      .refresh-btn {
+      .refresh-btn,
+      .add-btn {
         background: #e3f2fd;
         color: #1565c0;
         border: none;
         border-radius: 10px;
-        padding: 10px 16px;
+        padding: 10px 14px;
         font-size: 14px;
         font-weight: 600;
         cursor: pointer;
+        white-space: nowrap;
       }
-      .work-card {
+      .add-btn {
+        background: #fff3e0;
+        color: #e65100;
+      }
+      .work-card,
+      .problem-card,
+      .knowledge-card {
         background: white;
         border-radius: 14px;
         padding: 16px;
@@ -373,20 +367,22 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         cursor: pointer;
       }
-      .work-card:active {
+      .work-card:active,
+      .problem-card:active,
+      .knowledge-card:active {
         transform: scale(0.98);
       }
-      .work-card-top {
+      .card-top {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         margin-bottom: 8px;
+        gap: 8px;
       }
-      .work-card-title {
+      .card-title {
         font-size: 16px;
         font-weight: bold;
         flex: 1;
-        margin-right: 10px;
       }
       .status-badge {
         display: inline-block;
@@ -396,15 +392,18 @@
         font-weight: 600;
         white-space: nowrap;
       }
-      .status-waiting_evidence {
+      .status-waiting_evidence,
+      .status-open {
         background: #fff3e0;
         color: #e65100;
       }
-      .status-uploading {
+      .status-uploading,
+      .status-solving {
         background: #e3f2fd;
         color: #1565c0;
       }
-      .status-completed {
+      .status-completed,
+      .status-resolved {
         background: #e8f5e9;
         color: #2e7d32;
       }
@@ -412,19 +411,14 @@
         background: #ffebee;
         color: #c62828;
       }
-      .work-card-meta {
+      .card-meta {
         font-size: 13px;
         color: #777;
         display: flex;
         gap: 12px;
         flex-wrap: wrap;
       }
-      .work-card-meta span {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-      .work-id-text {
+      .id-text {
         font-family: monospace;
         font-size: 12px;
         color: #1565c0;
@@ -441,178 +435,12 @@
         font-size: 64px;
         margin-bottom: 20px;
       }
-
-      /* === Problem/Solution/Knowledge Styles === */
-      .filter-tabs {
-        display: flex;
-        gap: 6px;
-        margin-bottom: 16px;
-        flex-wrap: wrap;
-      }
-      .filter-tab {
-        flex: 1;
-        min-width: 70px;
-        border: 1px solid #ddd;
-        border-radius: 20px;
-        padding: 8px 14px;
-        font-size: 13px;
-        cursor: pointer;
-        background: #fafafa;
-        color: #666;
-        text-align: center;
-      }
-      .filter-tab.active {
-        background: #1a73e8;
-        color: white;
-        border-color: #1a73e8;
-      }
-      .filter-tab:active {
-        transform: scale(0.97);
-      }
-      .search-bar-wrap {
-        display: flex;
-        gap: 8px;
-      }
-      .search-bar {
-        flex: 1;
-        border: 2px solid #ddd;
-        border-radius: 12px;
-        padding: 12px 16px;
-        font-size: 16px;
-        background: #fafafa;
-      }
-      .search-bar:focus {
-        outline: none;
-        border-color: #1a73e8;
-        background: #fff;
-      }
-      .problem-card {
-        background: white;
-        border-radius: 14px;
-        padding: 16px;
-        margin-bottom: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        cursor: pointer;
-      }
-      .problem-card:active {
-        transform: scale(0.98);
-      }
-      .problem-card-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 8px;
-      }
-      .problem-card-title {
-        font-size: 16px;
-        font-weight: bold;
-        flex: 1;
-        margin-right: 10px;
-      }
-      .status-open { background: #ffebee; color: #c62828; }
-      .status-solving { background: #fff3e0; color: #e65100; }
-      .status-resolved { background: #e8f5e9; color: #2e7d32; }
-      .problem-card-meta {
-        font-size: 13px;
-        color: #777;
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-      .problem-card-meta span {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-      .problem-id-text {
-        font-family: monospace;
-        font-size: 12px;
-        color: #c62828;
-        background: #ffebee;
-        padding: 2px 6px;
-        border-radius: 6px;
-      }
-      .solution-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 14px;
-        background: #fafafa;
-        border-radius: 12px;
-        margin-bottom: 8px;
-        border-left: 4px solid #1a73e8;
-      }
-      .solution-text {
-        flex: 1;
-        font-size: 15px;
-        color: #333;
-      }
-      .solution-meta {
-        font-size: 12px;
-        color: #888;
-        display: flex;
-        gap: 8px;
-        margin-top: 6px;
-      }
-      .solution-feedback {
-        display: flex;
-        gap: 12px;
-        margin-top: 4px;
-      }
-      .feedback-btn {
-        background: none;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 4px 10px;
-        cursor: pointer;
-        font-size: 14px;
-      }
-      .feedback-btn:hover {
-        background: #f0f0f0;
-      }
-      .knowledge-card {
-        background: white;
-        border-radius: 14px;
-        padding: 16px;
-        margin-bottom: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        cursor: pointer;
-        border-left: 4px solid #1a73e8;
-      }
-      .knowledge-card:active {
-        transform: scale(0.98);
-      }
-      .knowledge-card-title {
-        font-size: 16px;
-        font-weight: bold;
-        margin-bottom: 6px;
-      }
-      .knowledge-card-solution {
-        font-size: 14px;
-        color: #555;
-        margin-bottom: 8px;
-      }
-      .knowledge-card-stats {
-        font-size: 12px;
-        color: #888;
-        display: flex;
-        gap: 12px;
-      }
-      .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-        color: #999;
-      }
-      .empty-state-icon {
-        font-size: 64px;
-        margin-bottom: 20px;
-      }
-      /* === Work Detail Modal === */
       .detail-row {
         display: flex;
         justify-content: space-between;
         padding: 10px 0;
         border-bottom: 1px solid #f0f0f0;
+        gap: 12px;
       }
       .detail-label {
         font-size: 13px;
@@ -622,35 +450,96 @@
         font-size: 15px;
         color: #333;
         text-align: right;
-        max-width: 60%;
+        max-width: 65%;
         word-break: break-word;
       }
-      .evidence-list {
+      .evidence-list,
+      .solution-list {
         margin-top: 12px;
       }
-      .evidence-item {
+      .evidence-item,
+      .solution-item {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 10px;
-        padding: 10px;
+        padding: 12px;
         background: #fafafa;
         border-radius: 10px;
         margin-bottom: 8px;
       }
-      .evidence-icon {
-        font-size: 24px;
+      .evidence-icon,
+      .solution-icon {
+        font-size: 22px;
       }
-      .evidence-info {
+      .evidence-info,
+      .solution-info {
         flex: 1;
       }
-      .evidence-name {
+      .evidence-name,
+      .solution-text {
         font-size: 14px;
         font-weight: 600;
-        word-break: break-all;
+        word-break: break-word;
       }
-      .evidence-meta {
+      .evidence-meta,
+      .solution-meta {
         font-size: 12px;
         color: #888;
+        margin-top: 4px;
+      }
+      .search-box {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .search-box input {
+        flex: 1;
+      }
+      .search-box button {
+        flex: 0 0 auto;
+        min-width: 70px;
+      }
+      .fb-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .fb-btn {
+        flex: 1;
+        border: none;
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        min-height: 44px;
+        cursor: pointer;
+      }
+      .fb-up {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+      .fb-down {
+        background: #ffebee;
+        color: #c62828;
+      }
+      .fb-btn:disabled {
+        opacity: 0.5;
+      }
+      .settings-card {
+        background: white;
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+      .settings-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .settings-row:last-child {
+        border-bottom: none;
       }
       @media (min-width: 768px) {
         .screen {
@@ -682,21 +571,29 @@
       <div class="home-header">
         <div class="user-name" id="userName">Loading...</div>
         <div class="user-role" id="userRole">User</div>
-        <div class="exp-display">
-          💎 <span id="userExp">0</span>/ 
-          <span id="expMax">100</span> 
-          <span id="expProgress">0%</span>
-        </div>
-        <div class="exp-progress-bar">
-          <div class="exp-progress-fill" style="width: 0%"></div>
-        </div>
+        <div class="user-exp" id="userExp">⭐ EXP: 0</div>
       </div>
-      <button class="mic-button" id="micButton" onclick="toggleVoiceInput()">
+      <button
+        class="mic-button"
+        id="micButton"
+        onclick="toggleVoiceInput('work')"
+      >
         🎙️
       </button>
       <div class="mic-label" id="micLabel">แตะเพื่อพูดบันทึกงาน</div>
-      <div style="text-align:center; margin-top:20px;">
-        <button class="btn btn-primary" onclick="showScreen('problems')" style="min-height:48px;">⚠️ แจ้งปัญหา</button>
+      <div class="home-actions">
+        <button
+          class="home-action-btn problem"
+          onclick="openCreateProblemModal()"
+        >
+          ⚠️ แจ้งปัญหา
+        </button>
+        <button
+          class="home-action-btn knowledge"
+          onclick="showScreen('knowledge')"
+        >
+          🔍 ค้นหาความรู้
+        </button>
       </div>
       <div id="homeMessage" style="display: none; margin-top: 16px"></div>
     </div>
@@ -714,54 +611,65 @@
     <div id="problemsScreen" class="screen">
       <div class="screen-header">
         <div class="screen-title">⚠️ ปัญหา</div>
-        <button class="refresh-btn" onclick="loadProblems('all')">🔄 โหลดใหม่</button>
+        <div>
+          <button class="add-btn" onclick="openCreateProblemModal()">
+            + แจ้งปัญหา
+          </button>
+          <button class="refresh-btn" onclick="loadProblems()">🔄</button>
+        </div>
       </div>
-      <div class="filter-tabs" id="problemFilters">
-        <button class="filter-tab active" onclick="loadProblems('all', this)">ทั้งหมด</button>
-        <button class="filter-tab" onclick="loadProblems('mine', this)">ของฉัน</button>
-        <button class="filter-tab" onclick="loadProblems('solving', this)">กำลังแก้ไข</button>
-        <button class="filter-tab" onclick="loadProblems('resolved', this)">แก้ไขแล้ว</button>
-      </div>
-      <div style="text-align:right; margin-bottom:12px;">
-        <button class="btn btn-primary" onclick="openProblemModal()" style="min-height:44px;">🔴 แจ้งปัญหา</button>
-      </div>
-      <div id="problemList"></div>
+      <div id="problemsList"></div>
     </div>
 
     <div id="knowledgeScreen" class="screen">
       <div class="screen-header">
         <div class="screen-title">🔍 ฐานความรู้</div>
       </div>
-      <div class="search-bar-wrap" style="margin-bottom:16px;">
-        <input type="text" class="search-bar" id="knowledgeSearch" placeholder="ค้นหาปัญหา แนวแก้ไข..." oninput="debounceSearch()" />
-        <button class="btn btn-primary" onclick="loadKnowledge()" style="min-height:44px;">ค้นหา</button>
+      <div class="search-box">
+        <input
+          type="text"
+          class="form-input"
+          id="knowledgeQuery"
+          placeholder="ค้นหาปัญหา / วิธีแก้"
+        />
+        <button class="btn btn-primary" onclick="searchKnowledge()">
+          ค้นหา
+        </button>
       </div>
-      <div id="knowledgeResults"></div>
+      <div id="knowledgeList"></div>
     </div>
 
     <div id="settingsScreen" class="screen">
-      <div class="settings-section">
-        <h3>⚙️ ค่า EXP</h3>
-        <div class="form-group">
-          <label class="form-label">EXP สูงสุด</label>
-          <input type="number" class="form-input" id="settingExpMax" min="1" value="100">
-          <div class="hint">จำนวน EXP สูงสุดที่ผู้ใช้สามารถสะสมได้</div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">EXP จาก Feedback สำเร็จ</label>
-          <input type="number" class="form-input" id="settingExpFeedbackSuccess" min="0" value="10">
-          <div class="hint">จำนวน EXP ที่ได้รับเมื่อกด Feedback สำเร็จ</div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">เกณฑ์ Feedback ลบ</label>
-          <input type="number" class="form-input" id="settingNegativeFeedbackThreshold" min="0" value="5">
-          <div class="hint">จำนวน Feedback ลบที่ทำให้ Solution ถูกซ่อน</div>
-        </div>
-        
-        <button class="btn btn-primary" onclick="saveSettings()">บันทึกตั้งค่า</button>
+      <div class="screen-header">
+        <div class="screen-title">⚙️ ตั้งค่า</div>
       </div>
+      <div class="settings-card" id="settingsCard">
+        <div class="settings-row">
+          <span>ชื่อ</span><strong id="setName">-</strong>
+        </div>
+        <div class="settings-row">
+          <span>อีเมล</span><strong id="setEmail">-</strong>
+        </div>
+        <div class="settings-row">
+          <span>สิทธิ์</span><strong id="setRole">-</strong>
+        </div>
+        <div class="settings-row">
+          <span>EXP</span><strong id="setExp">0</strong>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="loadExpTransactions()">
+          ดูประวัติ EXP
+        </button>
+        <button
+          class="btn btn-danger"
+          style="background: #ffebee; color: #c62828"
+          onclick="logout()"
+        >
+          ออกจากระบบ
+        </button>
+      </div>
+      <div id="expTxnList" style="margin-top: 16px"></div>
     </div>
 
     <nav class="bottom-nav" id="bottomNav" style="display: none">
@@ -794,45 +702,28 @@
       </div>
     </div>
 
+    <!-- Work Confirm Modal -->
     <div class="modal-overlay" id="confirmModal">
       <div class="modal-sheet">
         <div class="modal-title">ตรวจสอบข้อมูลงาน</div>
         <div class="modal-sub">แก้ไขได้ก่อนยืนยันบันทึก</div>
-        <div class="form-label">ข้อความต้นฉบับ (Original Transcript)</div>
+        <div class="form-label">ข้อความต้นฉบับ</div>
         <div class="transcript-box" id="confirmTranscript"></div>
-        <div class="category-toggle">
-          <button
-            type="button"
-            class="category-btn active-work"
-            id="btnCatWork"
-            onclick="setCategory('work')"
-          >
-            🏠 งาน
-          </button>
-          <button
-            type="button"
-            class="category-btn"
-            id="btnCatProblem"
-            onclick="setCategory('problem')"
-          >
-            ⚠️ ปัญหา
-          </button>
+        <div class="form-group">
+          <label class="form-label">วันที่</label
+          ><input type="date" class="form-input" id="fieldWorkDate" />
         </div>
         <div class="form-group">
-          <label class="form-label">วันที่</label>
-          <input type="date" class="form-input" id="fieldWorkDate" />
+          <label class="form-label">เวลาเริ่ม</label
+          ><input type="time" class="form-input" id="fieldStartTime" />
         </div>
         <div class="form-group">
-          <label class="form-label">เวลาเริ่ม</label>
-          <input type="time" class="form-input" id="fieldStartTime" />
+          <label class="form-label">เวลาสิ้นสุด</label
+          ><input type="time" class="form-input" id="fieldEndTime" />
         </div>
         <div class="form-group">
-          <label class="form-label">เวลาสิ้นสุด</label>
-          <input type="time" class="form-input" id="fieldEndTime" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">สถานที่</label>
-          <input
+          <label class="form-label">สถานที่</label
+          ><input
             type="text"
             class="form-input"
             id="fieldLocation"
@@ -840,33 +731,30 @@
           />
         </div>
         <div class="form-group">
-          <label class="form-label">ประเภทงาน</label>
-          <input
+          <label class="form-label">ประเภทงาน</label
+          ><input
             type="text"
             class="form-input"
             id="fieldWorkType"
-            placeholder="เช่น ถ่ายรูป / ประชุม / ซ่อม"
+            placeholder="เช่น ถ่ายรูป / ประชุม"
           />
         </div>
         <div class="form-group">
-          <label class="form-label">หัวข้อ</label>
-          <input type="text" class="form-input" id="fieldTitle" />
+          <label class="form-label">หัวข้อ</label
+          ><input type="text" class="form-input" id="fieldTitle" />
         </div>
         <div class="form-group">
-          <label class="form-label">รายละเอียดงาน</label>
-          <textarea class="form-textarea" id="fieldDescription"></textarea>
+          <label class="form-label">รายละเอียดงาน</label
+          ><textarea class="form-textarea" id="fieldDescription"></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label">หมายเหตุ</label>
-          <input
+          <label class="form-label">หมายเหตุ</label
+          ><input
             type="text"
             class="form-input"
             id="fieldNotes"
             placeholder="ไม่บังคับ"
           />
-        </div>
-        <div class="hint">
-          ระบบพยายามแยกข้อมูลให้อัตโนมัติ — ถ้าผิดให้แก้ก่อนกดยืนยัน
         </div>
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="closeConfirmModal()">
@@ -888,9 +776,7 @@
         <div style="font-size: 48px; margin-bottom: 12px">✅</div>
         <div class="modal-title">บันทึกงานสำเร็จ</div>
         <div class="work-id-badge" id="successWorkId">WF-...</div>
-        <div class="modal-sub">
-          ต้องการเพิ่มหลักฐานให้กับงานนี้ตอนนี้หรือไม่?
-        </div>
+        <div class="modal-sub">ต้องการเพิ่มหลักฐานตอนนี้หรือไม่?</div>
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="skipEvidence()">
             แนบภายหลัง
@@ -930,36 +816,36 @@
         <div class="modal-title">แก้ไขงาน</div>
         <div class="modal-sub" id="editWorkIdLabel"></div>
         <div class="form-group">
-          <label class="form-label">วันที่</label>
-          <input type="date" class="form-input" id="editWorkDate" />
+          <label class="form-label">วันที่</label
+          ><input type="date" class="form-input" id="editWorkDate" />
         </div>
         <div class="form-group">
-          <label class="form-label">เวลาเริ่ม</label>
-          <input type="time" class="form-input" id="editStartTime" />
+          <label class="form-label">เวลาเริ่ม</label
+          ><input type="time" class="form-input" id="editStartTime" />
         </div>
         <div class="form-group">
-          <label class="form-label">เวลาสิ้นสุด</label>
-          <input type="time" class="form-input" id="editEndTime" />
+          <label class="form-label">เวลาสิ้นสุด</label
+          ><input type="time" class="form-input" id="editEndTime" />
         </div>
         <div class="form-group">
-          <label class="form-label">สถานที่</label>
-          <input type="text" class="form-input" id="editLocation" />
+          <label class="form-label">สถานที่</label
+          ><input type="text" class="form-input" id="editLocation" />
         </div>
         <div class="form-group">
-          <label class="form-label">ประเภทงาน</label>
-          <input type="text" class="form-input" id="editWorkType" />
+          <label class="form-label">ประเภทงาน</label
+          ><input type="text" class="form-input" id="editWorkType" />
         </div>
         <div class="form-group">
-          <label class="form-label">หัวข้อ</label>
-          <input type="text" class="form-input" id="editTitle" />
+          <label class="form-label">หัวข้อ</label
+          ><input type="text" class="form-input" id="editTitle" />
         </div>
         <div class="form-group">
-          <label class="form-label">รายละเอียดงาน</label>
-          <textarea class="form-textarea" id="editDescription"></textarea>
+          <label class="form-label">รายละเอียดงาน</label
+          ><textarea class="form-textarea" id="editDescription"></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label">หมายเหตุ</label>
-          <input type="text" class="form-input" id="editNotes" />
+          <label class="form-label">หมายเหตุ</label
+          ><input type="text" class="form-input" id="editNotes" />
         </div>
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="closeEditWork()">
@@ -969,6 +855,114 @@
             class="btn btn-primary"
             id="btnEditWork"
             onclick="saveEditWork()"
+          >
+            บันทึก
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem Create Modal -->
+    <div class="modal-overlay" id="problemCreateModal">
+      <div class="modal-sheet">
+        <div class="modal-title">แจ้งปัญหา</div>
+        <div class="modal-sub">พูดหรือพิมพ์ปัญหาที่พบ</div>
+        <div class="form-label">ข้อความต้นฉบับ</div>
+        <div
+          class="transcript-box"
+          id="problemTranscript"
+          style="display: none"
+        ></div>
+        <div class="form-group">
+          <label class="form-label">หัวข้อปัญหา</label
+          ><input
+            type="text"
+            class="form-input"
+            id="problemTitle"
+            placeholder="เช่น โปรเจคเตอร์ภาพไม่ออก"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">รายละเอียด</label
+          ><textarea
+            class="form-textarea"
+            id="problemDescription"
+            placeholder="อธิบายอาการ / บริบท"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">หมวดหมู่</label
+          ><input
+            type="text"
+            class="form-input"
+            id="problemCategory"
+            placeholder="เช่น อุปกรณ์ / ระบบ / เครือข่าย"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">สถานที่</label
+          ><input
+            type="text"
+            class="form-input"
+            id="problemLocation"
+            placeholder="เช่น ห้องประชุม 1"
+          />
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="closeCreateProblemModal()">
+            ยกเลิก
+          </button>
+          <button class="btn btn-warn" onclick="startProblemVoice()">
+            🎙️ พูด
+          </button>
+          <button
+            class="btn btn-primary"
+            id="btnSaveProblem"
+            onclick="confirmSaveProblem()"
+          >
+            บันทึก
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem Detail Modal -->
+    <div class="modal-overlay" id="problemDetailModal">
+      <div class="modal-sheet">
+        <div class="modal-title">รายละเอียดปัญหา</div>
+        <div id="problemDetailContent"></div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="closeProblemDetail()">
+            ปิด
+          </button>
+          <button class="btn btn-primary" onclick="openAddSolutionModal()">
+            + เพิ่มวิธีแก้
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Solution Modal -->
+    <div class="modal-overlay" id="solutionModal">
+      <div class="modal-sheet">
+        <div class="modal-title">เพิ่มวิธีแก้ไข</div>
+        <div class="modal-sub" id="solutionProblemLabel"></div>
+        <div class="form-group">
+          <label class="form-label">วิธีแก้</label
+          ><textarea
+            class="form-textarea"
+            id="solutionText"
+            placeholder="เช่น เปลี่ยนสาย HDMI"
+          ></textarea>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="closeAddSolutionModal()">
+            ยกเลิก
+          </button>
+          <button
+            class="btn btn-primary"
+            id="btnSaveSolution"
+            onclick="confirmSaveSolution()"
           >
             บันทึก
           </button>
@@ -990,7 +984,7 @@
         <div class="modal-title">พิมพ์บันทึกงาน</div>
         <div class="modal-sub">ใช้เมื่อไมโครโฟนใช้ไม่ได้</div>
         <div class="form-group">
-          <label class="form-label">พูด/พิมพ์รายละเอียดงาน</label>
+          <label class="form-label">รายละเอียดงาน</label>
           <textarea
             class="form-textarea"
             id="manualTranscript"
@@ -1008,67 +1002,6 @@
       </div>
     </div>
 
-    <div class="modal-overlay" id="problemDetailModal">
-      <div class="modal-sheet">
-        <div class="modal-title">📋 รายละเอียดปัญหา</div>
-        <div id="problemDetailContent"></div>
-        <div class="btn-row">
-          <button class="btn btn-secondary" onclick="closeProblemDetail()">ปิด</button>
-          <button class="btn btn-primary" id="btnAddSolution" onclick="openSolutionModal()">💡 เพมแนวแก้ไข</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-overlay" id="problemCreateModal">
-      <div class="modal-sheet">
-        <div class="modal-title">🔴 แจ้งปัญหาใหม่</div>
-        <div class="modal-sub">พูดหรือพิมพ์รายละเอียดปัญหา</div>
-        <div class="form-label">ข้อความต้นฉบับ (Original Transcript)</div>
-        <div class="transcript-box" id="problemTranscript"></div>
-        <div class="form-group">
-          <label class="form-label">วันที่</label>
-          <input type="date" class="form-input" id="problemWorkDate" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">สถานที่</label>
-          <input type="text" class="form-input" id="problemLocation" placeholder="เช่น ตึกอธิการ" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">ประเภท</label>
-          <input type="text" class="form-input" id="problemWorkType" placeholder="เช่น ซ่อม / ไม่ทำงาน" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">หัวข้อ</label>
-          <input type="text" class="form-input" id="problemTitle" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">รายละเอียด</label>
-          <textarea class="form-textarea" id="problemDescription"></textarea>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-secondary" onclick="closeProblemModal()">ยกเลิก</button>
-          <button class="btn btn-primary" id="btnCreateProblem" onclick="confirmCreateProblem()">ยืนยันแจ้งปัญหา</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-overlay" id="solutionModal">
-      <div class="modal-sheet">
-        <div class="modal-title">💡 เพมแนวแก้ไข</div>
-        <div class="modal-sub" id="solutionProblemLabel"></div>
-        <div class="form-label">ข้อความต้นฉบับ (Original Transcript)</div>
-        <div class="transcript-box" id="solutionTranscript"></div>
-        <div class="form-group">
-          <label class="form-label">แนวแก้ไข</label>
-          <textarea class="form-textarea" id="solutionText" placeholder="เช่น เปลี่ยนสาย HDMI เส้นใหม่..."></textarea>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-secondary" onclick="closeSolutionModal()">ยกเลิก</button>
-          <button class="btn btn-primary" id="btnCreateSolution" onclick="confirmCreateSolution()">ยืนยันเพม</button>
-        </div>
-      </div>
-    </div>
-
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
       const GOOGLE_CLIENT_ID =
@@ -1082,12 +1015,12 @@
       let recognition = null;
       let isListening = false;
       let currentTranscript = "";
-      let lastParsed = null;
+      let voiceMode = "work";
+      let micTimeout = null;
       let savedWorkId = "";
       let currentWork = null;
+      let currentProblem = null;
       let historyWorks = [];
-      let currentCategory = "work";
-      let currentUserEmail = "";
 
       function initGoogleSignIn() {
         google.accounts.id.initialize({
@@ -1095,7 +1028,6 @@
           ux_mode: "redirect",
           login_uri: LOGIN_REDIRECT_URI,
         });
-
         google.accounts.id.renderButton(
           document.getElementById("googleSignInBtn"),
           {
@@ -1115,17 +1047,13 @@
 
       async function callBackend(action, data) {
         const headers = { "Content-Type": "application/json" };
-        if (sessionToken) {
-          headers["Authorization"] = "Bearer " + sessionToken;
-        }
-
+        if (sessionToken) headers["Authorization"] = "Bearer " + sessionToken;
         const response = await fetch(BACKEND_URL, {
           method: "POST",
           headers: headers,
           credentials: "include",
           body: JSON.stringify({ action: action, data: data || {} }),
         });
-
         const text = await response.text();
         try {
           return JSON.parse(text);
@@ -1144,7 +1072,6 @@
         document
           .querySelectorAll(".nav-item")
           .forEach((n) => n.classList.remove("active"));
-
         const screenMap = {
           home: "homeScreen",
           history: "historyScreen",
@@ -1152,9 +1079,7 @@
           knowledge: "knowledgeScreen",
           settings: "settingsScreen",
         };
-
         document.getElementById(screenMap[screenName]).classList.add("active");
-        const navItems = document.querySelectorAll(".nav-item");
         const navIndex = {
           home: 0,
           history: 1,
@@ -1162,17 +1087,17 @@
           knowledge: 3,
           settings: 4,
         };
-        navItems[navIndex[screenName]].classList.add("active");
-
-        if (screenName === "history") {
-          loadWorkHistory();
-        } else if (screenName === "problems") {
-          loadProblems('all');
-        } else if (screenName === "knowledge") {
-          document.getElementById("knowledgeResults").innerHTML =
-            '<div class="empty-state"><div class="empty-state-icon">🔍</div><h3>ค้นหาปัญหา</h3><p>พิมพ์คำค้นหาเพื่อหา Problem + Solution</p></div>';
-        } else if (screenName === "settings") {
-          loadSettings();
+        document
+          .querySelectorAll(".nav-item")
+          [navIndex[screenName]].classList.add("active");
+        if (screenName === "history") loadWorkHistory();
+        if (screenName === "problems") loadProblems();
+        if (screenName === "settings") renderSettings();
+        if (screenName === "knowledge") {
+          const list = document.getElementById("knowledgeList");
+          if (!list.innerHTML.trim())
+            list.innerHTML =
+              '<div class="empty-state"><div class="empty-state-icon">🔍</div><h3>ค้นหาความรู้</h3><p>พิมพ์คำค้น เช่น โปรเจคเตอร์ / HDMI / WiFi</p></div>';
         }
       }
 
@@ -1192,8 +1117,9 @@
           currentUser.displayName;
         document.getElementById("userRole").textContent =
           currentUser.role === "super_admin" ? "Super Admin" : "User";
-        currentUserEmail = currentUser.email || "";
-        loadUserExp();
+        document.getElementById("userExp").textContent =
+          "⭐ EXP: " + (currentUser.expTotal || 0);
+        loadExp();
       }
 
       function showError(message) {
@@ -1207,6 +1133,22 @@
         el.style.display = "block";
         el.className = isError ? "error-message" : "success-message";
         el.textContent = text;
+        setTimeout(function () {
+          el.style.display = "none";
+        }, 3000);
+      }
+
+      async function loadExp() {
+        try {
+          const result = await callBackend("exp.get", {});
+          if (result.success) {
+            currentUser.expTotal = result.data.exp || 0;
+            document.getElementById("userExp").textContent =
+              "⭐ EXP: " + currentUser.expTotal;
+            const setExp = document.getElementById("setExp");
+            if (setExp) setExp.textContent = currentUser.expTotal;
+          }
+        } catch (e) {}
       }
 
       function supportsSpeech() {
@@ -1216,7 +1158,6 @@
       function initSpeechRecognition() {
         const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SR) return null;
-
         const rec = new SR();
         rec.lang = "th-TH";
         rec.continuous = false;
@@ -1225,6 +1166,7 @@
 
         rec.onstart = function () {
           isListening = true;
+          clearTimeout(micTimeout);
           document.getElementById("micButton").classList.add("listening");
           document.getElementById("micLabel").textContent =
             "กำลังฟัง... พูดได้เลย";
@@ -1235,15 +1177,11 @@
           let finalText = "";
           for (let i = event.resultIndex; i < event.results.length; i++) {
             const t = event.results[i][0].transcript;
-            if (event.results[i].isFinal) {
-              finalText += t;
-            } else {
-              interim += t;
-            }
+            if (event.results[i].isFinal) finalText += t;
+            else interim += t;
           }
-          if (finalText) {
+          if (finalText)
             currentTranscript = (currentTranscript + " " + finalText).trim();
-          }
           document.getElementById("micLabel").textContent =
             interim || currentTranscript || "กำลังฟัง...";
         };
@@ -1255,13 +1193,10 @@
             "แตะเพื่อพูดบันทึกงาน";
           if (event.error === "not-allowed") {
             showHomeMessage("ไม่อนุญาตใช้ไมโครโฟน — ใช้พิมพ์แทนได้", true);
-            openTextInputModal();
+            if (voiceMode === "work") openTextInputModal();
           } else if (event.error !== "aborted" && event.error !== "no-speech") {
-            showHomeMessage(
-              "ไมโครโฟนมีปัญหา (" + event.error + ") — ใช้พิมพ์แทนได้",
-              true,
-            );
-            openTextInputModal();
+            showHomeMessage("ไมโครโฟนมีปัญหา (" + event.error + ")", true);
+            if (voiceMode === "work") openTextInputModal();
           }
         };
 
@@ -1270,47 +1205,69 @@
           document.getElementById("micButton").classList.remove("listening");
           document.getElementById("micLabel").textContent =
             "แตะเพื่อพูดบันทึกงาน";
-          if (currentTranscript && currentTranscript.trim()) {
-            openConfirmModal(currentTranscript.trim());
-          }
+          clearTimeout(micTimeout);
+          micTimeout = setTimeout(function () {
+            if (!currentTranscript || !currentTranscript.trim()) return;
+            const text = currentTranscript.trim();
+            if (voiceMode === "problem") fillProblemFromVoice(text);
+            else openConfirmModal(text);
+          }, 2000);
         };
-
         return rec;
       }
 
-      function toggleVoiceInput() {
+      function toggleVoiceInput(mode) {
+        voiceMode = mode || "work";
         if (!supportsSpeech()) {
-          showHomeMessage("เบราวุเตอร์นี้ไม่รองรับเสียง — ใช้พิมพ์แทน", true);
-          openTextInputModal();
+          showHomeMessage("เบราว์เซอร์นี้ไม่รองรับเสียง — ใช้พิมพ์แทน", true);
+          if (voiceMode === "work") openTextInputModal();
           return;
         }
-
-        if (!recognition) {
-          recognition = initSpeechRecognition();
-        }
-
+        if (!recognition) recognition = initSpeechRecognition();
         if (isListening) {
           recognition.stop();
           return;
         }
-
         currentTranscript = "";
         try {
           recognition.start();
         } catch (e) {
-          openTextInputModal();
+          if (voiceMode === "work") openTextInputModal();
         }
+      }
+
+      function startProblemVoice() {
+        openCreateProblemModal();
+        toggleVoiceInput("problem");
+      }
+
+      function fillProblemFromVoice(text) {
+        document.getElementById("problemTranscript").style.display = "block";
+        document.getElementById("problemTranscript").textContent = text;
+        document.getElementById("problemDescription").value = text;
+        let title = text;
+        if (title.length > 60) title = title.substring(0, 60) + "...";
+        document.getElementById("problemTitle").value = title;
+        if (/โปรเจค|projector|hdmi|สาย/i.test(text))
+          document.getElementById("problemCategory").value = "อุปกรณ์";
+        else if (/เน็ต|wifi|network|อินเทอร์เน็ต/i.test(text))
+          document.getElementById("problemCategory").value = "เครือข่าย";
+        else if (/คอม|คอมพิวเตอร์|pc|notebook/i.test(text))
+          document.getElementById("problemCategory").value = "คอมพิวเตอร์";
+        const loc = text.match(
+          /(?:ที่|ที่\s*)((?:ตึก|อาคาร|ห้อง|คณะ|สำนัก|ศูนย์|ชั้น)[^\s,]+(?:\s+[^\s,]+){0,3})/,
+        );
+        if (loc)
+          document.getElementById("problemLocation").value = loc[1].trim();
       }
 
       function openTextInputModal() {
         document.getElementById("manualTranscript").value = "";
         document.getElementById("textInputModal").classList.add("open");
       }
-
       function closeTextInputModal() {
         document.getElementById("textInputModal").classList.remove("open");
       }
-
       function submitManualTranscript() {
         const text = document.getElementById("manualTranscript").value.trim();
         if (!text) {
@@ -1322,29 +1279,6 @@
       }
 
       function parseWorkFromText(text) {
-        const problemKeywords = [
-          "ปัญหา", "เสีย", "พัง", "ไม่ทำงาน", "ไม่ออก", "ขัดข้อง",
-          "ชำรุด", "เสียหาย", "ใช้การไม่ได้", "ไม่เห็น", "ไม่ได้ยิน",
-          "หาย", "เละ", "แตก", "หลุด", "ตก", "มืด", "ไม่มี",
-          "เครื่อง", "ฉาย", "โปรเจกเตอร์", "แอร์", "ลม", "น้ำรั่ว",
-          "ไฟดับ", "ไฟกระชาก", "ไฟไม่ติด", "ประตู", "ล็อค",
-          "เข้าประตูไม่ได้", "ลิฟต์", "บันได", "ซ่อม", "แก้ไข",
-          "แจ้ง", "ร้องเรียน", "ร้องทุกข์", "คอม", "คอมพิวเตอร์",
-          "หน้าจอ", "เมาส์", "คีย์บอร์ด", "สาย", "ปลั๊ก",
-          "แบต", "แบตเตอรี่", "ชาร์จ", "ไม่มีไฟ", "ไฟฟ้า",
-        ];
-        const detectedKeywords = [];
-        const textLower = text.toLowerCase();
-        for (var i = 0; i < problemKeywords.length; i++) {
-          if (textLower.indexOf(problemKeywords[i].toLowerCase()) !== -1) {
-            detectedKeywords.push(problemKeywords[i]);
-          }
-        }
-
-        const isProblem = detectedKeywords.length >= 1 && (
-          /ปัญหา|เสีย|พัง|ไม่ทำงาน|ไม่ออก|ขัดข้อง|ชำรุด|เสียหาย|ใช้การไม่ได้|ซ่อม|แก้ไข|ร้องเรียน/.test(textLower)
-        );
-
         const result = {
           originalTranscript: text,
           workDate: todayISO(),
@@ -1355,10 +1289,7 @@
           title: "",
           description: text,
           notes: "",
-          isProblem: isProblem,
-          detectedKeywords: detectedKeywords.slice(0, 5),
         };
-
         const dateMatch = text.match(
           /(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?/,
         );
@@ -1371,14 +1302,12 @@
           if (y < 100) y += 2000;
           if (y > 2500) y -= 543;
           result.workDate = y + "-" + pad2(m) + "-" + pad2(d);
-        } else if (/วันนี้/.test(text)) {
-          result.workDate = todayISO();
-        } else if (/เมื่อวาน/.test(text)) {
+        } else if (/วันนี้/.test(text)) result.workDate = todayISO();
+        else if (/เมื่อวาน/.test(text)) {
           const d = new Date();
           d.setDate(d.getDate() - 1);
           result.workDate = toISODate(d);
         }
-
         const timeRange = text.match(
           /(\d{1,2})[\.:](\d{2})\s*(?:น\.?)?\s*(?:ถึง|-|–|—)\s*(\d{1,2})[\.:](\d{2})/,
         );
@@ -1389,9 +1318,8 @@
           const singleTime = text.match(
             /(?:เวลา|ตี|โมง)?\s*(\d{1,2})[\.:](\d{2})\s*(?:น\.?)?/,
           );
-          if (singleTime) {
+          if (singleTime)
             result.startTime = pad2(singleTime[1]) + ":" + singleTime[2];
-          }
           if (/เช้า|ครึ่งวันเช้า/.test(text) && !result.startTime) {
             result.startTime = "08:30";
             result.endTime = "12:00";
@@ -1405,16 +1333,13 @@
             result.endTime = result.endTime || "16:30";
           }
         }
-
         const locMatch = text.match(
           /(?:ที่|ที่\s*)((?:ตึก|อาคาร|ห้อง|คณะ|สำนัก|ศูนย์|ชั้น)[^\s,]+(?:\s+[^\s,]+){0,3})/,
         );
-        if (locMatch) {
+        if (locMatch)
           result.location = locMatch[1]
             .replace(/\s+(ครึ่งวัน|เช้า|บ่าย|เวลา|ถึง).*$/, "")
             .trim();
-        }
-
         if (/ถ่ายรูป|ถ่ายภาพ|ถ่าย/.test(text)) result.workType = "ถ่ายรูป";
         else if (/ประชุม/.test(text)) result.workType = "ประชุม";
         else if (/ซ่อม|แก้ไข|แก้ปัญหา/.test(text))
@@ -1422,9 +1347,6 @@
         else if (/อบรม|ฝึก/.test(text)) result.workType = "อบรม";
         else if (/จัดเตรียม|เซ็ตอัพ|setup/i.test(text))
           result.workType = "จัดเตรียม";
-        else if (isProblem && !result.workType)
-          result.workType = "แจ้งปัญหา";
-
         let title = text;
         if (result.location) title = title.replace(result.location, "").trim();
         title = title
@@ -1435,15 +1357,13 @@
           );
         title = title.replace(/\s+/g, " ").trim();
         if (title.length > 60) title = title.substring(0, 60) + "...";
-        result.title = title || result.workType || (isProblem ? "แจ้งปัญหา" : "งานบันทึกด้วยเสียง");
-
+        result.title = title || result.workType || "งานบันทึกด้วยเสียง";
         return result;
       }
 
       function todayISO() {
         return toISODate(new Date());
       }
-
       function toISODate(d) {
         return (
           d.getFullYear() +
@@ -1453,67 +1373,35 @@
           pad2(d.getDate())
         );
       }
-
       function pad2(n) {
         return String(n).padStart(2, "0");
       }
 
       function openConfirmModal(transcript) {
-        lastParsed = parseWorkFromText(transcript);
+        const parsed = parseWorkFromText(transcript);
         document.getElementById("confirmTranscript").textContent = transcript;
         document.getElementById("fieldWorkDate").value =
-          lastParsed.workDate || todayISO();
+          parsed.workDate || todayISO();
         document.getElementById("fieldStartTime").value =
-          lastParsed.startTime || "";
-        document.getElementById("fieldEndTime").value =
-          lastParsed.endTime || "";
-        document.getElementById("fieldLocation").value =
-          lastParsed.location || "";
-        document.getElementById("fieldWorkType").value =
-          lastParsed.workType || "";
-        document.getElementById("fieldTitle").value = lastParsed.title || "";
+          parsed.startTime || "";
+        document.getElementById("fieldEndTime").value = parsed.endTime || "";
+        document.getElementById("fieldLocation").value = parsed.location || "";
+        document.getElementById("fieldWorkType").value = parsed.workType || "";
+        document.getElementById("fieldTitle").value = parsed.title || "";
         document.getElementById("fieldDescription").value =
-          lastParsed.description || transcript;
+          parsed.description || transcript;
         document.getElementById("fieldNotes").value = "";
-        setCategory(lastParsed.isProblem ? "problem" : "work");
         document.getElementById("confirmModal").classList.add("open");
       }
-
-      function setCategory(cat) {
-        currentCategory = cat;
-        var btnWork = document.getElementById("btnCatWork");
-        var btnProblem = document.getElementById("btnCatProblem");
-        if (cat === "problem") {
-          btnWork.className = "category-btn";
-          btnProblem.className = "category-btn active-problem";
-          if (lastParsed && lastParsed.detectedKeywords && lastParsed.detectedKeywords.length > 0) {
-            var badge = document.createElement("span");
-            badge.className = "auto-detect-badge";
-            badge.textContent = "🔍 ตรวจพบคำ: " + lastParsed.detectedKeywords.join(", ");
-            badge.style.marginLeft = "8px";
-            btnProblem.appendChild(badge);
-          }
-        } else {
-          btnWork.className = "category-btn active-work";
-          btnProblem.className = "category-btn";
-        }
-      }
-
       function closeConfirmModal() {
         document.getElementById("confirmModal").classList.remove("open");
         currentTranscript = "";
-        currentCategory = "work";
-        var btnWork = document.getElementById("btnCatWork");
-        var btnProblem = document.getElementById("btnCatProblem");
-        btnWork.className = "category-btn active-work";
-        btnProblem.className = "category-btn";
       }
 
       async function confirmSaveWork() {
         const btn = document.getElementById("btnSaveWork");
         btn.disabled = true;
         btn.textContent = "กำลังบันทึก...";
-
         const payload = {
           originalTranscript:
             document.getElementById("confirmTranscript").textContent,
@@ -1525,36 +1413,18 @@
           title: document.getElementById("fieldTitle").value.trim(),
           description: document.getElementById("fieldDescription").value.trim(),
           notes: document.getElementById("fieldNotes").value.trim(),
-          category: currentCategory === "problem" ? "แจ้งปัญหา" : "งาน",
         };
-
         try {
-          let result;
-          if (currentCategory === "problem") {
-            result = await callBackend("problem.create", payload);
-          } else {
-            result = await callBackend("work.create", payload);
-          }
+          const result = await callBackend("work.create", payload);
           btn.disabled = false;
           btn.textContent = "ยืนยันบันทึก";
-
           if (result.success) {
             closeConfirmModal();
-            if (currentCategory === "problem") {
-              savedWorkId = result.data.problem.problemId;
-              showHomeMessage(
-                "แจ้งปัญหาเรียบร้อย: " + savedWorkId + " คุณสามารถเพมแนวแก้ไขได้จากหน้าปัญหา",
-                false
-              );
-            } else {
-              savedWorkId = result.data.work.workId;
-              document.getElementById("successWorkId").textContent =
-                result.data.work.workId;
-              document.getElementById("successModal").classList.add("open");
-            }
-          } else {
-            alert("บันทึกไม่สำเร็จ: " + result.error);
-          }
+            savedWorkId = result.data.work.workId;
+            document.getElementById("successWorkId").textContent =
+              result.data.work.workId;
+            document.getElementById("successModal").classList.add("open");
+          } else alert("บันทึกไม่สำเร็จ: " + result.error);
         } catch (err) {
           btn.disabled = false;
           btn.textContent = "ยืนยันบันทึก";
@@ -1564,35 +1434,71 @@
 
       function skipEvidence() {
         document.getElementById("successModal").classList.remove("open");
-        showHomeMessage(
-          "บันทึกงานเรียบร้อย สถานะ Waiting Evidence คุณสามารถกลับมาแนบรูปได้ภายหลัง",
-          false,
-        );
+        showHomeMessage("บันทึกงานเรียบร้อย สถานะ Waiting Evidence", false);
       }
-
       function openEvidencePicker() {
         if (!savedWorkId) {
-          alert("ไม่พบรหัสงาน กรุณาลองบันทึกใหม่");
+          alert("ไม่พบรหัสงาน");
           return;
         }
         document.getElementById("evidenceCamera").click();
       }
 
+      function compressImage(file, maxWidth, quality, callback) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          const img = new Image();
+          img.onload = function () {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            let width = img.width,
+              height = img.height;
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(img, 0, 0, width, height);
+            canvas.toBlob(
+              function (blob) {
+                callback(blob || file);
+              },
+              "image/jpeg",
+              quality,
+            );
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
       function uploadEvidence(file) {
         if (!file) return;
+        if (file.type.startsWith("image/")) {
+          compressImage(file, 1600, 0.8, function (blob) {
+            const name = (file.name || "photo.jpg").replace(/\.\w+$/, ".jpg");
+            sendEvidenceFile(new File([blob], name, { type: "image/jpeg" }));
+          });
+        } else sendEvidenceFile(file);
+      }
+
+      function sendEvidenceFile(file) {
         const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
         const maxBytes = 5 * 1024 * 1024;
         if (!allowedTypes.includes(file.type)) {
-          alert("รองรับเฉพาะไฟล์ JPG, PNG และ PDF");
+          alert("รองรับเฉพาะ JPG, PNG และ PDF");
           return;
         }
         if (file.size > maxBytes) {
-          alert("ไฟล์มีขนาดเกิน 5 MB กรุณาเลือกไฟล์ใหม่");
+          alert("ไฟล์มีขนาดเกิน 5 MB");
           return;
         }
+        document.getElementById("successModal").classList.remove("open");
+        showHomeMessage("กำลังอัปโหลดหลักฐาน...", false);
         const reader = new FileReader();
         reader.onerror = function () {
-          alert("ไม่สามารถอ่านไฟล์ได้ กรุณาลองใหม่");
+          alert("ไม่สามารถอ่านไฟล์ได้");
         };
         reader.onload = async function () {
           try {
@@ -1603,14 +1509,8 @@
               base64Data: String(reader.result).split(",")[1],
             });
             if (!result.success) throw new Error(result.error);
-            document.getElementById("successModal").classList.remove("open");
-            showHomeMessage(
-              "อัปโหลดหลักฐานสำเร็จและตรวจพบไฟล์จริงใน Google Drive แล้ว",
-              false,
-            );
-            if (currentWork) {
-              openWorkDetail(currentWork.workId);
-            }
+            showHomeMessage("อัปโหลดหลักฐานสำเร็จ", false);
+            if (currentWork) openWorkDetail(currentWork.workId);
           } catch (err) {
             alert(
               "Upload Failed: " + err.message + "\nคุณสามารถลองใหม่ได้ทันที",
@@ -1622,7 +1522,6 @@
         reader.readAsDataURL(file);
       }
 
-      /* === History Page === */
       function statusLabel(status) {
         const labels = {
           waiting_evidence: "รอหลักฐาน",
@@ -1630,8 +1529,8 @@
           completed: "เสร็จสิ้น",
           upload_failed: "อัปโหลดไม่สำเร็จ",
           open: "เปิด",
-          solving: "กำลังแก้ไข",
-          resolved: "แก้ไขแล้ว",
+          solving: "กำลังแก้",
+          resolved: "แก้แล้ว",
         };
         return labels[status] || status;
       }
@@ -1640,11 +1539,9 @@
         const list = document.getElementById("historyList");
         list.innerHTML =
           '<div class="loading"><div class="spinner"></div><p>กำลังโหลดประวัติ...</p></div>';
-
         try {
           const result = await callBackend("work.list", {});
           if (!result.success) throw new Error(result.error);
-
           historyWorks = result.data.works || [];
           renderWorkHistory(historyWorks);
         } catch (err) {
@@ -1657,56 +1554,43 @@
 
       function renderWorkHistory(works) {
         const list = document.getElementById("historyList");
-
         if (!works.length) {
           list.innerHTML =
-            '<div class="empty-state"><div class="empty-state-icon">📭</div><h3>ยังไม่มีงาน</h3><p>กลับไปหน้าแรกแล้วกดปุ่มไมค์เพื่อบันทึกงานแรก</p></div>';
+            '<div class="empty-state"><div class="empty-state-icon">📭</div><h3>ยังไม่มีงาน</h3><p>กลับไปหน้าแรกแล้วกดปุ่มไมค์</p></div>';
           return;
         }
-
         list.innerHTML = works
           .map(function (work) {
-            const dateStr = work.workDate || "";
             const timeStr =
               work.startTime || work.endTime
                 ? (work.startTime || "") +
                   (work.endTime ? " - " + work.endTime : "")
                 : "";
-            const locationStr = work.location || "";
-            const evidenceIcon = work.status === "completed" ? "🟢" : "🟡";
-
             return (
               '<div class="work-card" onclick="openWorkDetail(\'' +
               escapeHtml(work.workId) +
               "')\">" +
-              '<div class="work-card-top">' +
-              '<div class="work-card-title">' +
+              '<div class="card-top"><div class="card-title">' +
               escapeHtml(work.title || "งานไม่มีชื่อ") +
               "</div>" +
               '<span class="status-badge status-' +
               escapeHtml(work.status || "waiting_evidence") +
               '">' +
               escapeHtml(statusLabel(work.status)) +
-              "</span>" +
-              "</div>" +
-              '<div class="work-card-meta">' +
-              "<span>📅 " +
-              escapeHtml(dateStr) +
+              "</span></div>" +
+              '<div class="card-meta"><span>📅 ' +
+              escapeHtml(work.workDate || "") +
               "</span>" +
               (timeStr ? "<span>🕐 " + escapeHtml(timeStr) + "</span>" : "") +
-              (locationStr
-                ? "<span>📍 " + escapeHtml(locationStr) + "</span>"
+              (work.location
+                ? "<span>📍 " + escapeHtml(work.location) + "</span>"
                 : "") +
               "<span>" +
-              evidenceIcon +
-              "</span>" +
-              "</div>" +
-              '<div class="work-card-meta" style="margin-top:6px;">' +
-              '<span class="work-id-text">' +
+              (work.status === "completed" ? "🟢" : "🟡") +
+              "</span></div>" +
+              '<div class="card-meta" style="margin-top:6px;"><span class="id-text">' +
               escapeHtml(work.workId) +
-              "</span>" +
-              "</div>" +
-              "</div>"
+              "</span></div></div>"
             );
           })
           .join("");
@@ -1718,17 +1602,13 @@
             callBackend("work.get", { workId: workId }),
             callBackend("evidence.list", { workId: workId }),
           ]);
-
           if (!workResult.success) throw new Error(workResult.error);
-
           currentWork = workResult.data.work;
           savedWorkId = workId;
-
-          const evidence = evidenceResult.success
-            ? evidenceResult.data.evidence || []
-            : [];
-
-          renderWorkDetail(currentWork, evidence);
+          renderWorkDetail(
+            currentWork,
+            evidenceResult.success ? evidenceResult.data.evidence || [] : [],
+          );
           document.getElementById("workDetailModal").classList.add("open");
         } catch (err) {
           alert("เปิดรายละเอียดไม่สำเร็จ: " + err.message);
@@ -1736,122 +1616,58 @@
       }
 
       function renderWorkDetail(work, evidence) {
-        const content = document.getElementById("detailContent");
-
-        let html = "";
-        html +=
+        let html =
           '<div class="work-id-badge">' + escapeHtml(work.workId) + "</div>";
-
-        html += '<div class="detail-row">';
-        html += '<span class="detail-label">สถานะ</span>';
-        html +=
-          '<span class="detail-value">' +
-          escapeHtml(statusLabel(work.status)) +
-          "</span>";
-        html += "</div>";
-
-        html += '<div class="detail-row">';
-        html += '<span class="detail-label">วันที่</span>';
-        html +=
-          '<span class="detail-value">' +
-          escapeHtml(work.workDate || "-") +
-          "</span>";
-        html += "</div>";
-
-        if (work.startTime || work.endTime) {
-          html += '<div class="detail-row">';
-          html += '<span class="detail-label">เวลา</span>';
-          html +=
-            '<span class="detail-value">' +
-            escapeHtml(
-              (work.startTime || "") +
-                (work.endTime ? " - " + work.endTime : ""),
-            ) +
-            "</span>";
-          html += "</div>";
-        }
-
-        if (work.location) {
-          html += '<div class="detail-row">';
-          html += '<span class="detail-label">สถานที่</span>';
-          html +=
-            '<span class="detail-value">' +
-            escapeHtml(work.location) +
-            "</span>";
-          html += "</div>";
-        }
-
-        if (work.workType) {
-          html += '<div class="detail-row">';
-          html += '<span class="detail-label">ประเภทงาน</span>';
-          html +=
-            '<span class="detail-value">' +
-            escapeHtml(work.workType) +
-            "</span>";
-          html += "</div>";
-        }
-
-        html += '<div class="detail-row">';
-        html += '<span class="detail-label">หัวข้อ</span>';
-        html +=
-          '<span class="detail-value">' +
-          escapeHtml(work.title || "-") +
-          "</span>";
-        html += "</div>";
-
-        html += '<div class="detail-row">';
-        html += '<span class="detail-label">รายละเอียดงาน</span>';
-        html +=
-          '<span class="detail-value">' +
-          escapeHtml(work.description || "-") +
-          "</span>";
-        html += "</div>";
-
-        if (work.notes) {
-          html += '<div class="detail-row">';
-          html += '<span class="detail-label">หมายเหตุ</span>';
-          html +=
-            '<span class="detail-value">' + escapeHtml(work.notes) + "</span>";
-          html += "</div>";
-        }
-
+        html += row("สถานะ", statusLabel(work.status));
+        html += row("วันที่", work.workDate || "-");
+        if (work.startTime || work.endTime)
+          html += row(
+            "เวลา",
+            (work.startTime || "") + (work.endTime ? " - " + work.endTime : ""),
+          );
+        if (work.location) html += row("สถานที่", work.location);
+        if (work.workType) html += row("ประเภทงาน", work.workType);
+        html += row("หัวข้อ", work.title || "-");
+        html += row("รายละเอียด", work.description || "-");
+        if (work.notes) html += row("หมายเหตุ", work.notes);
         html +=
           '<div class="form-label" style="margin-top:16px;">หลักฐาน (' +
           evidence.length +
           ")</div>";
-        if (evidence.length === 0) {
-          html +=
-            '<div class="hint">ยังไม่มีหลักฐาน — กดปุ่ม "เพิ่มหลักฐาน" ด้านล่าง</div>';
-        } else {
+        if (!evidence.length) html += '<div class="hint">ยังไม่มีหลักฐาน</div>';
+        else {
           html += '<div class="evidence-list">';
           evidence.forEach(function (ev) {
-            const icon = ev.mimeType === "application/pdf" ? "📄" : "🖼️";
-            html += '<div class="evidence-item">';
-            html += '<div class="evidence-icon">' + icon + "</div>";
-            html += '<div class="evidence-info">';
             html +=
+              '<div class="evidence-item"><div class="evidence-icon">' +
+              (ev.mimeType === "application/pdf" ? "📄" : "🖼️") +
+              '</div><div class="evidence-info">' +
               '<div class="evidence-name">' +
               escapeHtml(ev.fileName) +
-              "</div>";
-            html +=
-              '<div class="evidence-meta">' +
+              '</div><div class="evidence-meta">' +
               escapeHtml(ev.mimeType) +
+              "</div></div>" +
+              (ev.driveUrl
+                ? '<a href="' +
+                  escapeHtml(ev.driveUrl) +
+                  '" target="_blank" style="text-decoration:none;">↗</a>'
+                : "") +
               "</div>";
-            html += "</div>";
-            if (ev.driveUrl) {
-              html +=
-                '<a href="' +
-                escapeHtml(ev.driveUrl) +
-                '" target="_blank" style="text-decoration:none;">↗</a>';
-            }
-            html += "</div>";
           });
           html += "</div>";
         }
-
-        content.innerHTML = html;
+        document.getElementById("detailContent").innerHTML = html;
       }
 
+      function row(label, value) {
+        return (
+          '<div class="detail-row"><span class="detail-label">' +
+          escapeHtml(label) +
+          '</span><span class="detail-value">' +
+          escapeHtml(value) +
+          "</span></div>"
+        );
+      }
       function closeWorkDetail() {
         document.getElementById("workDetailModal").classList.remove("open");
         currentWork = null;
@@ -1877,7 +1693,6 @@
         document.getElementById("editNotes").value = currentWork.notes || "";
         document.getElementById("editWorkModal").classList.add("open");
       }
-
       function closeEditWork() {
         document.getElementById("editWorkModal").classList.remove("open");
       }
@@ -1886,7 +1701,6 @@
         const btn = document.getElementById("btnEditWork");
         btn.disabled = true;
         btn.textContent = "กำลังบันทึก...";
-
         const payload = {
           workId: currentWork.workId,
           workDate: document.getElementById("editWorkDate").value,
@@ -1898,19 +1712,15 @@
           description: document.getElementById("editDescription").value.trim(),
           notes: document.getElementById("editNotes").value.trim(),
         };
-
         try {
           const result = await callBackend("work.update", payload);
           btn.disabled = false;
           btn.textContent = "บันทึก";
-
           if (result.success) {
             closeEditWork();
             openWorkDetail(currentWork.workId);
             loadWorkHistory();
-          } else {
-            alert("บันทึกไม่สำเร็จ: " + result.error);
-          }
+          } else alert("บันทึกไม่สำเร็จ: " + result.error);
         } catch (err) {
           btn.disabled = false;
           btn.textContent = "บันทึก";
@@ -1926,104 +1736,129 @@
         document.getElementById("evidenceCamera").click();
       }
 
-      function escapeHtml(str) {
-        if (str === null || str === undefined) return "";
-        return String(str)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
+      /* ===== PROBLEMS ===== */
+      function openCreateProblemModal() {
+        document.getElementById("problemTranscript").style.display = "none";
+        document.getElementById("problemTranscript").textContent = "";
+        document.getElementById("problemTitle").value = "";
+        document.getElementById("problemDescription").value = "";
+        document.getElementById("problemCategory").value = "";
+        document.getElementById("problemLocation").value = "";
+        document.getElementById("problemCreateModal").classList.add("open");
+      }
+      function closeCreateProblemModal() {
+        document.getElementById("problemCreateModal").classList.remove("open");
       }
 
-      /* === Problem / Solution / Knowledge === */
-      let currentProblem = null;
-      let currentProblemId = "";
-      let currentSolutionProblemId = "";
-      let currentUserEmail = "";
-
-      function getUserEmail() {
-        return currentUser ? currentUser.email : "";
-      }
-
-      async function loadProblems(filter = 'all') {
-        const list = document.getElementById("problemList");
-        list.innerHTML = '<div class="loading"><div class="spinner"></div><p>กำลังโหลดปัญหา...</p></div>';
-
-        try {
-          const result = await callBackend("problem.list", { filter: filter });
-          if (!result.success) throw new Error(result.error);
-
-          const works = result.data.problems || [];
-          renderProblemCards(works);
-        } catch (err) {
-          list.innerHTML = '<div class="error-message">โหลดไม่สำเร็จ: ' + err.message + "</div>";
-        }
-      }
-
-      function renderProblemCards(problems) {
-        const list = document.getElementById("problemList");
-
-        if (!problems.length) {
-          list.innerHTML =
-            '<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>ยังไม่มีปัญหา</h3><p>กด "แจ้งปัญหา" เพื่อบันทึกปัญหาแรก</p></div>';
+      async function confirmSaveProblem() {
+        const btn = document.getElementById("btnSaveProblem");
+        const title = document.getElementById("problemTitle").value.trim();
+        const description = document
+          .getElementById("problemDescription")
+          .value.trim();
+        if (!title && !description) {
+          alert("กรุณากรอกหัวข้อหรือรายละเอียด");
           return;
         }
+        btn.disabled = true;
+        btn.textContent = "กำลังบันทึก...";
+        try {
+          const result = await callBackend("problem.create", {
+            title: title || description.substring(0, 60),
+            description: description || title,
+            category: document.getElementById("problemCategory").value.trim(),
+            location: document.getElementById("problemLocation").value.trim(),
+            originalTranscript:
+              document.getElementById("problemTranscript").textContent ||
+              description ||
+              title,
+          });
+          btn.disabled = false;
+          btn.textContent = "บันทึก";
+          if (result.success) {
+            closeCreateProblemModal();
+            showHomeMessage(
+              "บันทึกปัญหาเรียบร้อย: " + (result.data.problem.problemId || ""),
+              false,
+            );
+            showScreen("problems");
+          } else alert("บันทึกไม่สำเร็จ: " + result.error);
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = "บันทึก";
+          alert("เกิดข้อผิดพลาด: " + err.message);
+        }
+      }
 
+      async function loadProblems() {
+        const list = document.getElementById("problemsList");
+        list.innerHTML =
+          '<div class="loading"><div class="spinner"></div><p>กำลังโหลด...</p></div>';
+        try {
+          const result = await callBackend("problem.list", { filter: "all" });
+          if (!result.success) throw new Error(result.error);
+          renderProblems(result.data.problems || []);
+        } catch (err) {
+          list.innerHTML =
+            '<div class="error-message">โหลดไม่สำเร็จ: ' +
+            err.message +
+            "</div>";
+        }
+      }
+
+      function renderProblems(problems) {
+        const list = document.getElementById("problemsList");
+        if (!problems.length) {
+          list.innerHTML =
+            '<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>ยังไม่มีปัญหา</h3><p>กด + แจ้งปัญหา เพื่อเริ่มต้น</p></div>';
+          return;
+        }
         list.innerHTML = problems
           .map(function (p) {
             return (
-              '<div class="problem-card" onclick="loadProblemDetail(\'' +
+              '<div class="problem-card" onclick="openProblemDetail(\'' +
               escapeHtml(p.problemId) +
               "')\">" +
-              '<div class="problem-card-top">' +
-              '<div class="problem-card-title">' +
-              escapeHtml(p.title || "ปัญหาไม่มีหัวข้อ") +
+              '<div class="card-top"><div class="card-title">' +
+              escapeHtml(p.title || "ไม่มีหัวข้อ") +
               "</div>" +
               '<span class="status-badge status-' +
               escapeHtml(p.status || "open") +
               '">' +
               escapeHtml(statusLabel(p.status)) +
-              "</span>" +
-              "</div>" +
-              '<div class="problem-card-meta">' +
-              '<span class="problem-id-text">' +
-              escapeHtml(p.problemId) +
-              "</span>" +
-              "<span>📅 " +
-              escapeHtml(p.workDate || "-") +
-              "</span>" +
+              "</span></div>" +
+              '<div class="card-meta">' +
+              (p.location
+                ? "<span>📍 " + escapeHtml(p.location) + "</span>"
+                : "") +
+              (p.category
+                ? "<span>🏷️ " + escapeHtml(p.category) + "</span>"
+                : "") +
               "<span>💡 " +
-              escapeHtml(p.solutionCount || 0) +
+              (p.solutionCount || 0) +
               "</span>" +
               "<span>👍 " +
-              escapeHtml(p.positiveFeedback || 0) +
-              " 👎 " +
-              escapeHtml(p.negativeFeedback || 0) +
+              (p.positiveFeedback || 0) +
               "</span>" +
-              "</div>" +
-              "</div>"
+              "<span>👎 " +
+              (p.negativeFeedback || 0) +
+              "</span></div>" +
+              '<div class="card-meta" style="margin-top:6px;"><span class="id-text">' +
+              escapeHtml(p.problemId) +
+              "</span></div></div>"
             );
           })
           .join("");
       }
 
-      async function loadProblemDetail(problemId) {
+      async function openProblemDetail(problemId) {
         try {
-          const [problemResult, solutionResult] = await Promise.all([
-            callBackend("problem.get", { problemId: problemId }),
-            callBackend("solution.list", { problemId: problemId }),
-          ]);
-
-          if (!problemResult.success) throw new Error(problemResult.error);
-
-          currentProblem = problemResult.data.problem;
-          currentProblemId = problemId;
-          const solutions = solutionResult.success
-            ? solutionResult.data.solutions || []
-            : [];
-
-          renderProblemDetail(currentProblem, solutions);
+          const result = await callBackend("problem.get", {
+            problemId: problemId,
+          });
+          if (!result.success) throw new Error(result.error);
+          currentProblem = result.data.problem;
+          renderProblemDetail(result.data.problem, result.data.solutions || []);
           document.getElementById("problemDetailModal").classList.add("open");
         } catch (err) {
           alert("เปิดรายละเอียดไม่สำเร็จ: " + err.message);
@@ -2031,266 +1866,312 @@
       }
 
       function renderProblemDetail(problem, solutions) {
-        const content = document.getElementById("problemDetailContent");
-        let html = "";
-
-        html += '<div class="work-id-badge" style="background:#ffebee;color:#c62828;">' + escapeHtml(problem.problemId) + "</div>";
-
-        html += '<div class="detail-row"><span class="detail-label">สถานะ</span><span class="detail-value"><span class="status-badge status-' + escapeHtml(problem.status || "open") + '">' + escapeHtml(statusLabel(problem.status)) + "</span></span></div>";
-
-        html += '<div class="detail-row"><span class="detail-label">วันที่</span><span class="detail-value">' + escapeHtml(problem.workDate || "-") + "</span></div>";
-
-        if (problem.location) {
-          html += '<div class="detail-row"><span class="detail-label">สถานที่</span><span class="detail-value">' + escapeHtml(problem.location) + "</span></div>";
-        }
-
-        if (problem.workType) {
-          html += '<div class="detail-row"><span class="detail-label">ประเภท</span><span class="detail-value">' + escapeHtml(problem.workType) + "</span></div>";
-        }
-
-        html += '<div class="detail-row"><span class="detail-label">ปัญหา</span><span class="detail-value">' + escapeHtml(problem.originalTranscript || problem.description || "-") + "</span></div>";
-
-        if (problem.description) {
-          html += '<div class="detail-row"><span class="detail-label">รายละเอียด</span><span class="detail-value">' + escapeHtml(problem.description) + "</span></div>";
-        }
-
-        html += '<div class="form-label" style="margin-top:16px;">แนวแก้ไข (' + solutions.length + ")</div>";
-
-        if (solutions.length === 0) {
-          html += '<div class="hint">ยังไม่มีแนวแก้ไข — กดปุ่ม "เพมแนวแก้ไข" ด้านล่าง</div>';
-        } else {
-          html += '<div class="evidence-list">';
+        let html =
+          '<div class="work-id-badge">' +
+          escapeHtml(problem.problemId) +
+          "</div>";
+        html += row("สถานะ", statusLabel(problem.status));
+        html += row("หัวข้อ", problem.title || "-");
+        html += row("รายละเอียด", problem.description || "-");
+        if (problem.category) html += row("หมวดหมู่", problem.category);
+        if (problem.location) html += row("สถานที่", problem.location);
+        html += row(
+          "👍 / 👎",
+          (problem.positiveFeedback || 0) +
+            " / " +
+            (problem.negativeFeedback || 0),
+        );
+        html +=
+          '<div class="form-label" style="margin-top:16px;">วิธีแก้ไข (' +
+          solutions.length +
+          ")</div>";
+        if (!solutions.length)
+          html += '<div class="hint">ยังไม่มีวิธีแก้ — กดเพิ่มวิธีแก้</div>';
+        else {
+          html += '<div class="solution-list">';
           solutions.forEach(function (s) {
-            html += '<div class="solution-item">';
-            html += '<div class="solution-text">' + escapeHtml(s.solutionText) + "</div>";
-            html += '<div class="solution-meta">' + escapeHtml(s.createdBy || "-") + " · " + escapeHtml(s.createdAt || "") + "</div>";
-            html += '<div class="solution-feedback">';
-            html += '<button class="feedback-btn" onclick="sendFeedback(\'' + escapeHtml(problem.problemId) + '\',\'' + escapeHtml(s.solutionId) + '\',\'positive\')">👍 ' + escapeHtml(s.positiveFeedback || 0) + "</button>";
-            html += '<button class="feedback-btn" onclick="sendFeedback(\'' + escapeHtml(problem.problemId) + '\',\'' + escapeHtml(s.solutionId) + '\',\'negative\')">👎 ' + escapeHtml(s.negativeFeedback || 0) + "</button>";
-            html += "</div>";
-            html += "</div>";
+            html +=
+              '<div class="solution-item"><div class="solution-icon">💡</div><div class="solution-info">' +
+              '<div class="solution-text">' +
+              escapeHtml(s.solutionText || s.description || "-") +
+              "</div>" +
+              '<div class="solution-meta">👍 ' +
+              (s.positiveFeedback || 0) +
+              " · 👎 " +
+              (s.negativeFeedback || 0) +
+              ' · <span class="id-text">' +
+              escapeHtml(s.solutionId) +
+              "</span></div>" +
+              '<div class="fb-row">' +
+              '<button class="fb-btn fb-up" onclick="event.stopPropagation(); giveFeedback(\'' +
+              escapeHtml(problem.problemId) +
+              "','" +
+              escapeHtml(s.solutionId) +
+              "','positive')\">👍 ได้ผล</button>" +
+              '<button class="fb-btn fb-down" onclick="event.stopPropagation(); giveFeedback(\'' +
+              escapeHtml(problem.problemId) +
+              "','" +
+              escapeHtml(s.solutionId) +
+              "','negative')\">👎 ไม่ได้ผล</button>" +
+              "</div></div></div>";
           });
           html += "</div>";
         }
-
-        content.innerHTML = html;
+        document.getElementById("problemDetailContent").innerHTML = html;
       }
-
       function closeProblemDetail() {
         document.getElementById("problemDetailModal").classList.remove("open");
-        currentProblem = null;
-        currentProblemId = "";
       }
 
-      function openProblemModal(transcript) {
-        if (!transcript) {
-          document.getElementById("problemTranscript").textContent = "";
-        } else {
-          document.getElementById("problemTranscript").textContent = transcript;
-        }
-        document.getElementById("problemWorkDate").value = todayISO();
-        document.getElementById("problemLocation").value = "";
-        document.getElementById("problemWorkType").value = "";
-        document.getElementById("problemTitle").value = "";
-        document.getElementById("problemDescription").value = transcript || "";
-        document.getElementById("problemCreateModal").classList.add("open");
-      }
-
-      function closeProblemModal() {
-        document.getElementById("problemCreateModal").classList.remove("open");
-      }
-
-      async function confirmCreateProblem() {
-        const btn = document.getElementById("btnCreateProblem");
-        btn.disabled = true;
-        btn.textContent = "กำลังแจ้ง...";
-
-        const payload = {
-          originalTranscript: document.getElementById("problemTranscript").textContent,
-          workDate: document.getElementById("problemWorkDate").value,
-          location: document.getElementById("problemLocation").value.trim(),
-          workType: document.getElementById("problemWorkType").value.trim(),
-          title: document.getElementById("problemTitle").value.trim(),
-          description: document.getElementById("problemDescription").value.trim(),
-        };
-
-        try {
-          const result = await callBackend("problem.create", payload);
-          btn.disabled = false;
-          btn.textContent = "ยืนยันแจ้งปัญหา";
-
-          if (result.success) {
-            closeProblemModal();
-            showHomeMessage("แจ้งปัญหาเรียบร้อย: " + result.data.problem.problemId, false);
-            loadProblems('all');
-          } else {
-            alert("แจ้งไม่สำเร็จ: " + result.error);
-          }
-        } catch (err) {
-          btn.disabled = false;
-          btn.textContent = "ยืนยันแจ้งปัญหา";
-          alert("เกิดข้อผิดพลาด: " + err.message);
-        }
-      }
-
-      function openSolutionModal() {
+      function openAddSolutionModal() {
         if (!currentProblem) return;
-        currentSolutionProblemId = currentProblem.problemId;
         document.getElementById("solutionProblemLabel").textContent =
-          "ปัญหา: " + (currentProblem.title || currentProblem.problemId);
-        document.getElementById("solutionTranscript").textContent = "";
+          currentProblem.problemId + " — " + (currentProblem.title || "");
         document.getElementById("solutionText").value = "";
         document.getElementById("solutionModal").classList.add("open");
       }
-
-      function closeSolutionModal() {
+      function closeAddSolutionModal() {
         document.getElementById("solutionModal").classList.remove("open");
-        currentSolutionProblemId = "";
       }
 
-      async function confirmCreateSolution() {
-        const btn = document.getElementById("btnCreateSolution");
-        btn.disabled = true;
-        btn.textContent = "กำลังเพม...";
-
-        const solutionText = document.getElementById("solutionText").value.trim();
-        if (!solutionText) {
-          alert("กรุณากรอกแนวแก้ไข");
-          btn.disabled = false;
-          btn.textContent = "ยืนยันเพม";
+      async function confirmSaveSolution() {
+        const btn = document.getElementById("btnSaveSolution");
+        const text = document.getElementById("solutionText").value.trim();
+        if (!text) {
+          alert("กรุณากรอกวิธีแก้");
           return;
         }
-
-        const payload = {
-          problemId: currentSolutionProblemId,
-          solutionText: solutionText,
-        };
-
+        btn.disabled = true;
+        btn.textContent = "กำลังบันทึก...";
         try {
-          const result = await callBackend("solution.create", payload);
+          const result = await callBackend("solution.create", {
+            problemId: currentProblem.problemId,
+            title: text.substring(0, 80),
+            solutionText: text,
+            description: text,
+          });
           btn.disabled = false;
-          btn.textContent = "ยืนยันเพม";
-
+          btn.textContent = "บันทึก";
           if (result.success) {
-            closeSolutionModal();
-            showHomeMessage("เพมแนวแก้ไขเรียบร้อย", false);
-            loadProblemDetail(currentProblemId);
-            loadProblems('all');
-          } else {
-            alert("เพมไม่สำเร็จ: " + result.error);
-          }
+            closeAddSolutionModal();
+            openProblemDetail(currentProblem.problemId);
+            loadProblems();
+          } else alert("บันทึกไม่สำเร็จ: " + result.error);
         } catch (err) {
           btn.disabled = false;
-          btn.textContent = "ยืนยันเพม";
+          btn.textContent = "บันทึก";
           alert("เกิดข้อผิดพลาด: " + err.message);
         }
       }
 
-      async function loadKnowledge(query) {
-        const results = document.getElementById("knowledgeResults");
-        if (!query) {
-          results.innerHTML =
-            '<div class="empty-state"><div class="empty-state-icon">🔍</div><h3>ค้นหาปัญหา</h3><p>พิมพ์คำค้นหาเพื่อหา Problem + Solution</p></div>';
+      /* ===== KNOWLEDGE ===== */
+      async function searchKnowledge() {
+        const query = document.getElementById("knowledgeQuery").value.trim();
+        const list = document.getElementById("knowledgeList");
+        if (query.length < 2) {
+          alert("พิมพ์อย่างน้อย 2 ตัวอักษร");
           return;
         }
-
-        results.innerHTML = '<div class="loading"><div class="spinner"></div><p>กำลังค้นหา...</p></div>';
-
+        list.innerHTML =
+          '<div class="loading"><div class="spinner"></div><p>กำลังค้นหา...</p></div>';
         try {
-          const result = await callBackend("knowledge.search", { query: query });
+          const result = await callBackend("knowledge.search", {
+            query: query,
+          });
           if (!result.success) throw new Error(result.error);
-
-          const items = result.data.results || [];
-          renderKnowledge(items);
+          renderKnowledge(result.data.results || [], query);
         } catch (err) {
-          results.innerHTML = '<div class="error-message">ค้นหาไม่สำเร็จ: ' + err.message + "</div>";
+          list.innerHTML =
+            '<div class="error-message">ค้นหาไม่สำเร็จ: ' +
+            err.message +
+            "</div>";
         }
       }
 
-      function renderKnowledge(items) {
-        const results = document.getElementById("knowledgeResults");
-
-        if (!items.length) {
-          results.innerHTML =
-            '<div class="empty-state"><div class="empty-state-icon">🔍</div><h3>ไม่พบผลลัพธ์</h3><p>ลองค้นหาคำอื่น</p></div>';
+      function renderKnowledge(results, query) {
+        const list = document.getElementById("knowledgeList");
+        if (!results.length) {
+          list.innerHTML =
+            '<div class="empty-state"><div class="empty-state-icon">🔎</div><h3>ไม่พบผลลัพธ์</h3><p>ลองคำอื่นสำหรับ "' +
+            escapeHtml(query) +
+            '"</p></div>';
           return;
         }
-
-        results.innerHTML = items
-          .map(function (item) {
+        list.innerHTML = results
+          .map(function (r) {
+            let sols = "";
+            (r.solutions || []).forEach(function (s) {
+              sols +=
+                '<div class="solution-item" style="margin-top:8px;"><div class="solution-icon">💡</div><div class="solution-info">' +
+                '<div class="solution-text">' +
+                escapeHtml(s.solutionText || "-") +
+                "</div>" +
+                '<div class="solution-meta">👍 ' +
+                (s.positiveCount || 0) +
+                " · 👎 " +
+                (s.negativeCount || 0) +
+                "</div>" +
+                '<div class="fb-row">' +
+                '<button class="fb-btn fb-up" onclick="giveFeedback(\'' +
+                escapeHtml(r.problemId) +
+                "','" +
+                escapeHtml(s.solutionId) +
+                "','positive')\">👍 ได้ผล</button>" +
+                '<button class="fb-btn fb-down" onclick="giveFeedback(\'' +
+                escapeHtml(r.problemId) +
+                "','" +
+                escapeHtml(s.solutionId) +
+                "','negative')\">👎 ไม่ได้ผล</button>" +
+                "</div></div></div>";
+            });
             return (
-              '<div class="knowledge-card" onclick="loadProblemDetail(\'' +
-              escapeHtml(item.problemId) +
-              "')\">" +
-              '<div class="knowledge-card-title">' +
-              escapeHtml(item.title || "ปัญหาไม่มีหัวข้อ") +
+              '<div class="knowledge-card">' +
+              '<div class="card-top"><div class="card-title">' +
+              escapeHtml(r.title || "-") +
               "</div>" +
-              '<div class="knowledge-card-solution">' +
-              escapeHtml(
-                (item.solutions && item.solutions[0]
-                  ? item.solutions[0].solutionText
-                  : item.description || "") || "ยังไม่มีแนวแก้ไข"
-              ) +
-              "</div>" +
-              '<div class="knowledge-card-stats">' +
+              '<span class="status-badge status-' +
+              escapeHtml(r.status || "open") +
+              '">' +
+              escapeHtml(statusLabel(r.status)) +
+              "</span></div>" +
+              '<div class="card-meta"><span class="id-text">' +
+              escapeHtml(r.problemId) +
+              "</span>" +
+              (r.location
+                ? "<span>📍 " + escapeHtml(r.location) + "</span>"
+                : "") +
               "<span>👍 " +
-              escapeHtml(item.positiveFeedback || 0) +
-              "</span>" +
-              "<span>👎 " +
-              escapeHtml(item.negativeFeedback || 0) +
-              "</span>" +
-              "<span>💡 " +
-              escapeHtml(item.solutionCount || 0) +
-              " แนวแก้ไข</span>" +
-              "</div>" +
-              "</div>"
+              (r.positiveFeedback || 0) +
+              "</span></div>" +
+              (r.description
+                ? '<div style="margin-top:8px;font-size:14px;color:#555;">' +
+                  escapeHtml(r.description) +
+                  "</div>"
+                : "") +
+              sols +
+              '<div class="btn-row" style="margin-top:10px;"><button class="btn btn-secondary" onclick="openProblemDetail(\'' +
+              escapeHtml(r.problemId) +
+              "')\">ดูรายละเอียด</button></div></div>"
             );
           })
           .join("");
       }
 
-      let searchTimeout;
-      function debounceSearch() {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(function () {
-          const q = document.getElementById("knowledgeSearch").value.trim();
-          if (q.length >= 2) {
-            loadKnowledge(q);
-          }
-        }, 500);
-      }
-
-      async function sendFeedback(problemId, solutionId, type) {
+      async function giveFeedback(problemId, solutionId, type) {
         try {
+          const check = await callBackend("feedback.check", {
+            problemId: problemId,
+          });
+          if (check.success && check.data.hasFeedback) {
+            alert(
+              "คุณเคยให้ Feedback ปัญหานี้แล้ว (" +
+                (check.data.type === "positive" ? "👍" : "👎") +
+                ")",
+            );
+            return;
+          }
           const result = await callBackend("feedback.create", {
             problemId: problemId,
             solutionId: solutionId,
             type: type,
           });
-          if (result.success) {
-            loadProblemDetail(problemId);
-            loadUserExp();
-          } else {
-            alert("ส่ง Feedback ไม่สำเร็จ: " + result.error);
-          }
+          if (!result.success) throw new Error(result.error);
+          alert(
+            type === "positive" ? "บันทึก 👍 เรียบร้อย" : "บันทึก 👎 เรียบร้อย",
+          );
+          loadExp();
+          if (currentProblem && currentProblem.problemId === problemId)
+            openProblemDetail(problemId);
         } catch (err) {
-          alert("เกิดข้อผิดพลาด: " + err.message);
+          alert("ส่ง Feedback ไม่สำเร็จ: " + err.message);
         }
       }
 
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("sw.js").catch(function () {});
+      /* ===== SETTINGS ===== */
+      function renderSettings() {
+        if (!currentUser) return;
+        document.getElementById("setName").textContent =
+          currentUser.displayName || "-";
+        document.getElementById("setEmail").textContent =
+          currentUser.email || "-";
+        document.getElementById("setRole").textContent =
+          currentUser.role === "super_admin" ? "Super Admin" : "User";
+        document.getElementById("setExp").textContent =
+          currentUser.expTotal || 0;
+        loadExp();
       }
+
+      async function loadExpTransactions() {
+        const list = document.getElementById("expTxnList");
+        list.innerHTML =
+          '<div class="loading"><div class="spinner"></div><p>กำลังโหลด...</p></div>';
+        try {
+          const result = await callBackend("exp.transactions", {});
+          if (!result.success) throw new Error(result.error);
+          const txns = result.data.transactions || [];
+          if (!txns.length) {
+            list.innerHTML =
+              '<div class="empty-state"><p>ยังไม่มีประวัติ EXP</p></div>';
+            return;
+          }
+          list.innerHTML = txns
+            .map(function (t) {
+              return (
+                '<div class="settings-card"><div class="settings-row"><span>' +
+                escapeHtml(t.reason || "-") +
+                "</span><strong>" +
+                (Number(t.change) >= 0 ? "+" : "") +
+                escapeHtml(String(t.change)) +
+                " EXP</strong></div>" +
+                '<div class="settings-row"><span>ก่อน → หลัง</span><span>' +
+                escapeHtml(String(t.before)) +
+                " → " +
+                escapeHtml(String(t.after)) +
+                "</span></div></div>"
+              );
+            })
+            .join("");
+        } catch (err) {
+          list.innerHTML =
+            '<div class="error-message">' + err.message + "</div>";
+        }
+      }
+
+      function logout() {
+        clearSession();
+        currentUser = null;
+        document.getElementById("bottomNav").style.display = "none";
+        document
+          .querySelectorAll(".screen")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById("loginScreen").classList.add("active");
+        initGoogleSignIn();
+        fetch(BACKEND_URL.replace(/\/$/, "") + "/auth/logout", {
+          method: "POST",
+          credentials: "include",
+        }).catch(function () {});
+      }
+
+      function escapeHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&")
+          .replace(/</g, "<")
+          .replace(/>/g, ">")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      if ("serviceWorker" in navigator)
+        navigator.serviceWorker.register("sw.js").catch(function () {});
 
       window.addEventListener("load", function () {
         const hash = window.location.hash;
-
         if (hash.startsWith("#session=")) {
           sessionToken = decodeURIComponent(hash.substring("#session=".length));
-          localStorage.setItem("kku_follow_session_token", sessionToken);
+          localStorage.setItem("kku_session_token", sessionToken);
           history.replaceState(null, "", window.location.pathname);
         }
-
         if (hash.startsWith("#error=")) {
           const errCode = hash.substring("#error=".length);
           history.replaceState(null, "", window.location.pathname);
@@ -2299,12 +2180,10 @@
           initGoogleSignIn();
           return;
         }
-
         if (!sessionToken) {
           initGoogleSignIn();
           return;
         }
-
         showLoading();
         callBackend("auth.me", {})
           .then(function (result) {
@@ -2322,8 +2201,12 @@
             initGoogleSignIn();
           });
       });
+
+      document
+        .getElementById("knowledgeQuery")
+        .addEventListener("keydown", function (e) {
+          if (e.key === "Enter") searchKnowledge();
+        });
     </script>
   </body>
-</html></__parameter>
-<__parameter=filePath>C:\Users\egob_\OneDrive\Documents\Default Project\kku follow\index.html</__parameter>
-</__function
+</html>
