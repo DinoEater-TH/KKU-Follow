@@ -303,6 +303,46 @@
         color: #888;
         margin-top: 6px;
       }
+      .category-toggle {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .category-btn {
+        flex: 1;
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        background: #fafafa;
+        color: #666;
+        text-align: center;
+        transition: all 0.2s;
+      }
+      .category-btn.active-work {
+        border-color: #1a73e8;
+        background: #e3f2fd;
+        color: #1565c0;
+      }
+      .category-btn.active-problem {
+        border-color: #c62828;
+        background: #ffebee;
+        color: #c62828;
+      }
+      .category-btn:active {
+        transform: scale(0.97);
+      }
+      .auto-detect-badge {
+        display: inline-block;
+        background: #fff3e0;
+        color: #e65100;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        margin-left: 6px;
+      }
 
       /* === History Page Styles === */
       .screen-header {
@@ -730,75 +770,93 @@
     </div>
 
     <div class="modal-overlay" id="confirmModal">
-      <div class="modal-sheet">
-        <div class="modal-title">ตรวจสอบข้อมูลงาน</div>
-        <div class="modal-sub">แก้ไขได้ก่อนยืนยันบันทึก</div>
-        <div class="form-label">ข้อความต้นฉบับ (Original Transcript)</div>
-        <div class="transcript-box" id="confirmTranscript"></div>
-        <div class="form-group">
-          <label class="form-label">วันที่</label>
-          <input type="date" class="form-input" id="fieldWorkDate" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">เวลาเริ่ม</label>
-          <input type="time" class="form-input" id="fieldStartTime" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">เวลาสิ้นสุด</label>
-          <input type="time" class="form-input" id="fieldEndTime" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">สถานที่</label>
-          <input
-            type="text"
-            class="form-input"
-            id="fieldLocation"
-            placeholder="เช่น ตึกอธิการ"
-          />
-        </div>
-        <div class="form-group">
-          <label class="form-label">ประเภทงาน</label>
-          <input
-            type="text"
-            class="form-input"
-            id="fieldWorkType"
-            placeholder="เช่น ถ่ายรูป / ประชุม / ซ่อม"
-          />
-        </div>
-        <div class="form-group">
-          <label class="form-label">หัวข้อ</label>
-          <input type="text" class="form-input" id="fieldTitle" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">รายละเอียดงาน</label>
-          <textarea class="form-textarea" id="fieldDescription"></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">หมายเหตุ</label>
-          <input
-            type="text"
-            class="form-input"
-            id="fieldNotes"
-            placeholder="ไม่บังคับ"
-          />
-        </div>
-        <div class="hint">
-          ระบบพยายามแยกข้อมูลให้อัตโนมัติ — ถ้าผิดให้แก้ก่อนกดยืนยัน
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-secondary" onclick="closeConfirmModal()">
-            ยกเลิก
-          </button>
-          <button
-            class="btn btn-primary"
-            id="btnSaveWork"
-            onclick="confirmSaveWork()"
-          >
-            ยืนยันบันทึก
-          </button>
+        <div class="modal-sheet">
+          <div class="modal-title">ตรวจสอบข้อมูลงาน</div>
+          <div class="modal-sub">แก้ไขได้ก่อนยืนยันบันทึก</div>
+          <div class="form-label">ข้อความต้นฉบับ (Original Transcript)</div>
+          <div class="transcript-box" id="confirmTranscript"></div>
+          <div class="category-toggle">
+            <button
+              type="button"
+              class="category-btn active-work"
+              id="btnCatWork"
+              onclick="setCategory('work')"
+            >
+              🏠 งาน
+            </button>
+            <button
+              type="button"
+              class="category-btn"
+              id="btnCatProblem"
+              onclick="setCategory('problem')"
+            >
+              ⚠️ ปัญหา
+            </button>
+          </div>
+          <div class="form-group">
+            <label class="form-label">วันที่</label>
+            <input type="date" class="form-input" id="fieldWorkDate" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">เวลาเริ่ม</label>
+            <input type="time" class="form-input" id="fieldStartTime" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">เวลาสิ้นสุด</label>
+            <input type="time" class="form-input" id="fieldEndTime" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">สถานที่</label>
+            <input
+              type="text"
+              class="form-input"
+              id="fieldLocation"
+              placeholder="เช่น ตึกอธิการ"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">ประเภทงาน</label>
+            <input
+              type="text"
+              class="form-input"
+              id="fieldWorkType"
+              placeholder="เช่น ถ่ายรูป / ประชุม / ซ่อม"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">หัวข้อ</label>
+            <input type="text" class="form-input" id="fieldTitle" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">รายละเอียดงาน</label>
+            <textarea class="form-textarea" id="fieldDescription"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">หมายเหตุ</label>
+            <input
+              type="text"
+              class="form-input"
+              id="fieldNotes"
+              placeholder="ไม่บังคับ"
+            />
+          </div>
+          <div class="hint">
+            ระบบพยายามแยกข้อมูลให้อัตโนมัติ — ถ้าผิดให้แก้ก่อนกดยืนยัน
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-secondary" onclick="closeConfirmModal()">
+              ยกเลิก
+            </button>
+            <button
+              class="btn btn-primary"
+              id="btnSaveWork"
+              onclick="confirmSaveWork()"
+            >
+              ยืนยันบันทึก
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
     <div class="modal-overlay" id="successModal">
       <div class="modal-sheet" style="text-align: center">
@@ -1003,6 +1061,7 @@
       let savedWorkId = "";
       let currentWork = null;
       let historyWorks = [];
+      let currentCategory = "work";
 
       function initGoogleSignIn() {
         google.accounts.id.initialize({
@@ -1234,6 +1293,29 @@ if (screenName === "history") {
       }
 
       function parseWorkFromText(text) {
+        const problemKeywords = [
+          "ปัญหา", "เสีย", "พัง", "ไม่ทำงาน", "ไม่ออก", "ขัดข้อง",
+          "ชำรุด", "เสียหาย", "ใช้การไม่ได้", "ไม่เห็น", "ไม่ได้ยิน",
+          "หาย", "เลอะ", "แตก", "หลุด", "ตก", "มืด", "ไม่มี",
+          "เครื่อง", "ฉาย", "โปรเจกเตอร์", "แอร์", "ลม", "น้ำรั่ว",
+          "ไฟดับ", "ไฟกระชาก", "ไฟไม่ติด", "ประตู", "ล็อค",
+          "เข้าประตูไม่ได้", "ลิฟต์", "บันได", "ซ่อม", "แก้ไข",
+          "แจ้ง", "ร้องเรียน", "ร้องทุกข์", "คอม", "คอมพิวเตอร์",
+          "หน้าจอ", "เมาส์", "คีย์บอร์ด", "สาย", "ปลั๊ก",
+          "แบต", "แบตเตอรี่", "ชาร์จ", "ไม่มีไฟ", "ไฟฟ้า",
+        ];
+        const detectedKeywords = [];
+        const textLower = text.toLowerCase();
+        for (var i = 0; i < problemKeywords.length; i++) {
+          if (textLower.indexOf(problemKeywords[i].toLowerCase()) !== -1) {
+            detectedKeywords.push(problemKeywords[i]);
+          }
+        }
+
+        const isProblem = detectedKeywords.length >= 1 && (
+          /ปัญหา|เสีย|พัง|ไม่ทำงาน|ไม่ออก|ขัดข้อง|ชำรุด|เสียหาย|ใช้การไม่ได้|ซ่อม|แก้ไข|ร้องเรียน/.test(textLower)
+        );
+
         const result = {
           originalTranscript: text,
           workDate: todayISO(),
@@ -1244,6 +1326,8 @@ if (screenName === "history") {
           title: "",
           description: text,
           notes: "",
+          isProblem: isProblem,
+          detectedKeywords: detectedKeywords.slice(0, 5),
         };
 
         const dateMatch = text.match(
@@ -1309,6 +1393,8 @@ if (screenName === "history") {
         else if (/อบรม|ฝึก/.test(text)) result.workType = "อบรม";
         else if (/จัดเตรียม|เซ็ตอัพ|setup/i.test(text))
           result.workType = "จัดเตรียม";
+        else if (isProblem && !result.workType)
+          result.workType = "แจ้งปัญหา";
 
         let title = text;
         if (result.location) title = title.replace(result.location, "").trim();
@@ -1320,7 +1406,7 @@ if (screenName === "history") {
           );
         title = title.replace(/\s+/g, " ").trim();
         if (title.length > 60) title = title.substring(0, 60) + "...";
-        result.title = title || result.workType || "งานบันทึกด้วยเสียง";
+        result.title = title || result.workType || (isProblem ? "แจ้งปัญหา" : "งานบันทึกด้วยเสียง");
 
         return result;
       }
@@ -1360,12 +1446,38 @@ if (screenName === "history") {
         document.getElementById("fieldDescription").value =
           lastParsed.description || transcript;
         document.getElementById("fieldNotes").value = "";
+        setCategory(lastParsed.isProblem ? "problem" : "work");
         document.getElementById("confirmModal").classList.add("open");
+      }
+
+      function setCategory(cat) {
+        currentCategory = cat;
+        var btnWork = document.getElementById("btnCatWork");
+        var btnProblem = document.getElementById("btnCatProblem");
+        if (cat === "problem") {
+          btnWork.className = "category-btn";
+          btnProblem.className = "category-btn active-problem";
+          if (lastParsed && lastParsed.detectedKeywords && lastParsed.detectedKeywords.length > 0) {
+            var badge = document.createElement("span");
+            badge.className = "auto-detect-badge";
+            badge.textContent = "🔍 ตรวจพบคำ: " + lastParsed.detectedKeywords.join(", ");
+            badge.style.marginLeft = "8px";
+            btnProblem.appendChild(badge);
+          }
+        } else {
+          btnWork.className = "category-btn active-work";
+          btnProblem.className = "category-btn";
+        }
       }
 
       function closeConfirmModal() {
         document.getElementById("confirmModal").classList.remove("open");
         currentTranscript = "";
+        currentCategory = "work";
+        var btnWork = document.getElementById("btnCatWork");
+        var btnProblem = document.getElementById("btnCatProblem");
+        btnWork.className = "category-btn active-work";
+        btnProblem.className = "category-btn";
       }
 
       async function confirmSaveWork() {
@@ -1384,19 +1496,33 @@ if (screenName === "history") {
           title: document.getElementById("fieldTitle").value.trim(),
           description: document.getElementById("fieldDescription").value.trim(),
           notes: document.getElementById("fieldNotes").value.trim(),
+          category: currentCategory === "problem" ? "แจ้งปัญหา" : "งาน",
         };
 
         try {
-          const result = await callBackend("work.create", payload);
+          let result;
+          if (currentCategory === "problem") {
+            result = await callBackend("problem.create", payload);
+          } else {
+            result = await callBackend("work.create", payload);
+          }
           btn.disabled = false;
           btn.textContent = "ยืนยันบันทึก";
 
           if (result.success) {
             closeConfirmModal();
-            savedWorkId = result.data.work.workId;
-            document.getElementById("successWorkId").textContent =
-              result.data.work.workId;
-            document.getElementById("successModal").classList.add("open");
+            if (currentCategory === "problem") {
+              savedWorkId = result.data.problem.problemId;
+              showHomeMessage(
+                "แจ้งปัญหาเรียบร้อย: " + savedWorkId + " คุณสามารถเพมแนวแก้ไขได้จากหน้าปัญหา",
+                false
+              );
+            } else {
+              savedWorkId = result.data.work.workId;
+              document.getElementById("successWorkId").textContent =
+                result.data.work.workId;
+              document.getElementById("successModal").classList.add("open");
+            }
           } else {
             alert("บันทึกไม่สำเร็จ: " + result.error);
           }
