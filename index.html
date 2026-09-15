@@ -402,7 +402,172 @@
         margin-bottom: 20px;
       }
 
-      /* === Work Detail Modal === */
+      /* === Problem/Solution/Knowledge Styles === */
+.filter-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.filter-tab {
+  flex: 1;
+  min-width: 70px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #fafafa;
+  color: #666;
+  text-align: center;
+}
+.filter-tab.active {
+  background: #1a73e8;
+  color: white;
+  border-color: #1a73e8;
+}
+.filter-tab:active {
+  transform: scale(0.97);
+}
+.search-bar-wrap {
+  display: flex;
+  gap: 8px;
+}
+.search-bar {
+  flex: 1;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 16px;
+  background: #fafafa;
+}
+.search-bar:focus {
+  outline: none;
+  border-color: #1a73e8;
+  background: #fff;
+}
+.problem-card {
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+}
+.problem-card:active {
+  transform: scale(0.98);
+}
+.problem-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.problem-card-title {
+  font-size: 16px;
+  font-weight: bold;
+  flex: 1;
+  margin-right: 10px;
+}
+.status-open { background: #ffebee; color: #c62828; }
+.status-solving { background: #fff3e0; color: #e65100; }
+.status-resolved { background: #e8f5e9; color: #2e7d32; }
+.problem-card-meta {
+  font-size: 13px;
+  color: #777;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.problem-card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.problem-id-text {
+  font-family: monospace;
+  font-size: 12px;
+  color: #c62828;
+  background: #ffebee;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.solution-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  background: #fafafa;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  border-left: 4px solid #1a73e8;
+}
+.solution-text {
+  flex: 1;
+  font-size: 15px;
+  color: #333;
+}
+.solution-meta {
+  font-size: 12px;
+  color: #888;
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+.solution-feedback {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+.feedback-btn {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.feedback-btn:hover {
+  background: #f0f0f0;
+}
+.knowledge-card {
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  border-left: 4px solid #1a73e8;
+}
+.knowledge-card:active {
+  transform: scale(0.98);
+}
+.knowledge-card-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+.knowledge-card-solution {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 8px;
+}
+.knowledge-card-stats {
+  font-size: 12px;
+  color: #888;
+  display: flex;
+  gap: 12px;
+}
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+.empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+/* === Work Detail Modal === */
       .detail-row {
         display: flex;
         justify-content: space-between;
@@ -482,6 +647,9 @@
         🎙️
       </button>
       <div class="mic-label" id="micLabel">แตะเพื่อพูดบันทึกงาน</div>
+      <div style="text-align:center; margin-top:20px;">
+        <button class="btn btn-primary" onclick="showScreen('problems')" style="min-height:48px;">⚠️ แจ้งปัญหา</button>
+      </div>
       <div id="homeMessage" style="display: none; margin-top: 16px"></div>
     </div>
 
@@ -496,19 +664,31 @@
     </div>
 
     <div id="problemsScreen" class="screen">
-      <div class="placeholder">
-        <div class="placeholder-icon">⚠️</div>
-        <h2>ปัญหา</h2>
-        <p>ฟีเจอร์นี้จะแสดงใน STEP 8</p>
+      <div class="screen-header">
+        <div class="screen-title">⚠️ ปัญหา</div>
+        <button class="refresh-btn" onclick="loadProblems('all')">🔄 โหลดใหม่</button>
       </div>
+      <div class="filter-tabs" id="problemFilters">
+        <button class="filter-tab active" onclick="loadProblems('all', this)">ทั้งหมด</button>
+        <button class="filter-tab" onclick="loadProblems('mine', this)">ของฉัน</button>
+        <button class="filter-tab" onclick="loadProblems('solving', this)">กำลังแก้ไข</button>
+        <button class="filter-tab" onclick="loadProblems('resolved', this)">แก้ไขแล้ว</button>
+      </div>
+      <div style="text-align:right; margin-bottom:12px;">
+        <button class="btn btn-primary" onclick="openProblemModal()" style="min-height:44px;">🔴 แจ้งปัญหา</button>
+      </div>
+      <div id="problemList"></div>
     </div>
 
     <div id="knowledgeScreen" class="screen">
-      <div class="placeholder">
-        <div class="placeholder-icon">🔍</div>
-        <h2>ฐานความรู้</h2>
-        <p>ฟีเจอร์นี้จะแสดงใน STEP 8</p>
+      <div class="screen-header">
+        <div class="screen-title">🔍 ฐานความรู้</div>
       </div>
+      <div class="search-bar-wrap" style="margin-bottom:16px;">
+        <input type="text" class="search-bar" id="knowledgeSearch" placeholder="ค้นหาปัญหา แนวแก้ไข..." oninput="debounceSearch()" />
+        <button class="btn btn-primary" onclick="loadKnowledge()" style="min-height:44px;">ค้นหา</button>
+      </div>
+      <div id="knowledgeResults"></div>
     </div>
 
     <div id="settingsScreen" class="screen">
@@ -745,11 +925,72 @@
       </div>
     </div>
 
+    <div class="modal-overlay" id="problemDetailModal">
+      <div class="modal-sheet">
+        <div class="modal-title">📋 รายละเอียดปัญหา</div>
+        <div id="problemDetailContent"></div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="closeProblemDetail()">ปิด</button>
+          <button class="btn btn-primary" id="btnAddSolution" onclick="openSolutionModal()">💡 เพมแนวแก้ไข</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="problemCreateModal">
+      <div class="modal-sheet">
+        <div class="modal-title">🔴 แจ้งปัญหาใหม่</div>
+        <div class="modal-sub">พูดหรือพิมพ์รายละเอียดปัญหา</div>
+        <div class="form-label">ข้อความต้นฉบับ (Original Transcript)</div>
+        <div class="transcript-box" id="problemTranscript"></div>
+        <div class="form-group">
+          <label class="form-label">วันที่</label>
+          <input type="date" class="form-input" id="problemWorkDate" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">สถานที่</label>
+          <input type="text" class="form-input" id="problemLocation" placeholder="เช่น ตึกอธิการ" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">ประเภท</label>
+          <input type="text" class="form-input" id="problemWorkType" placeholder="เช่น ซ่อม / ไม่ทำงาน" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">หัวข้อ</label>
+          <input type="text" class="form-input" id="problemTitle" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">รายละเอียด</label>
+          <textarea class="form-textarea" id="problemDescription"></textarea>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="closeProblemModal()">ยกเลิก</button>
+          <button class="btn btn-primary" id="btnCreateProblem" onclick="confirmCreateProblem()">ยืนยันแจ้งปัญหา</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="solutionModal">
+      <div class="modal-sheet">
+        <div class="modal-title">💡 เพมแนวแก้ไข</div>
+        <div class="modal-sub" id="solutionProblemLabel"></div>
+        <div class="form-label">ข้อความต้นฉบับ (Original Transcript)</div>
+        <div class="transcript-box" id="solutionTranscript"></div>
+        <div class="form-group">
+          <label class="form-label">แนวแก้ไข</label>
+          <textarea class="form-textarea" id="solutionText" placeholder="เช่น เปลี่ยนสาย HDMI เส้นใหม่..."></textarea>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="closeSolutionModal()">ยกเลิก</button>
+          <button class="btn btn-primary" id="btnCreateSolution" onclick="confirmCreateSolution()">ยืนยันเพม</button>
+        </div>
+      </div>
+    </div>
+
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
       const GOOGLE_CLIENT_ID =
         "928908034346-e1isqsjdopuh9o8iitsdff33aghuujad.apps.googleusercontent.com";
-      const BACKEND_URL = "https://script.google.com/macros/s/AKfycby4UiPfvv9uZXIfIaDKeP3Ua4LAMuB1Rpax9qP0jY3nKtgLv2w0O75GL-soP8sznh8/exec";
+      const BACKEND_URL = "https://kku-follow.pongka.workers.dev";
       const LOGIN_REDIRECT_URI =
         "https://kku-follow.pongka.workers.dev/auth/callback";
 
@@ -838,9 +1079,14 @@
         };
         navItems[navIndex[screenName]].classList.add("active");
 
-        if (screenName === "history") {
-          loadWorkHistory();
-        }
+if (screenName === "history") {
+        loadWorkHistory();
+      } else if (screenName === "problems") {
+        loadProblems('all');
+      } else if (screenName === "knowledge") {
+        document.getElementById("knowledgeResults").innerHTML =
+          '<div class="empty-state"><div class="empty-state-icon">🔍</div><h3>ค้นหาปัญหา</h3><p>พิมพ์คำค้นหาเพื่อหา Problem + Solution</p></div>';
+      }
       }
 
       function showLoading() {
@@ -859,6 +1105,7 @@
           currentUser.displayName;
         document.getElementById("userRole").textContent =
           currentUser.role === "super_admin" ? "Super Admin" : "User";
+        currentUserEmail = currentUser.email || "";
       }
 
       function showError(message) {
@@ -1227,6 +1474,9 @@
           uploading: "กำลังอัปโหลด",
           completed: "เสร็จสิ้น",
           upload_failed: "อัปโหลดไม่สำเร็จ",
+          open: "เปิด",
+          solving: "กำลังแก้ไข",
+          resolved: "แก้ไขแล้ว",
         };
         return labels[status] || status;
       }
@@ -1529,6 +1779,347 @@
           .replace(/>/g, "&gt;")
           .replace(/"/g, "&quot;")
           .replace(/'/g, "&#039;");
+      }
+
+      /* === Problem / Solution / Knowledge === */
+      let currentProblem = null;
+      let currentProblemId = "";
+      let currentSolutionProblemId = "";
+      let currentUserEmail = "";
+
+      function getUserEmail() {
+        return currentUser ? currentUser.email : "";
+      }
+
+      async function loadProblems(filter = 'all') {
+        const list = document.getElementById("problemList");
+        list.innerHTML = '<div class="loading"><div class="spinner"></div><p>กำลังโหลดปัญหา...</p></div>';
+
+        try {
+          const result = await callBackend("problem.list", { filter: filter });
+          if (!result.success) throw new Error(result.error);
+
+          const works = result.data.problems || [];
+          renderProblemCards(works);
+        } catch (err) {
+          list.innerHTML = '<div class="error-message">โหลดไม่สำเร็จ: ' + err.message + "</div>";
+        }
+      }
+
+      function renderProblemCards(problems) {
+        const list = document.getElementById("problemList");
+
+        if (!problems.length) {
+          list.innerHTML =
+            '<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>ยังไม่มีปัญหา</h3><p>กด "แจ้งปัญหา" เพื่อบันทึกปัญหาแรก</p></div>';
+          return;
+        }
+
+        list.innerHTML = problems
+          .map(function (p) {
+            return (
+              '<div class="problem-card" onclick="loadProblemDetail(\'' +
+              escapeHtml(p.problemId) +
+              "')\">" +
+              '<div class="problem-card-top">' +
+              '<div class="problem-card-title">' +
+              escapeHtml(p.title || "ปัญหาไม่มีหัวข้อ") +
+              "</div>" +
+              '<span class="status-badge status-' +
+              escapeHtml(p.status || "open") +
+              '">' +
+              escapeHtml(statusLabel(p.status)) +
+              "</span>" +
+              "</div>" +
+              '<div class="problem-card-meta">' +
+              '<span class="problem-id-text">' +
+              escapeHtml(p.problemId) +
+              "</span>" +
+              "<span>📅 " +
+              escapeHtml(p.workDate || "-") +
+              "</span>" +
+              "<span>💡 " +
+              escapeHtml(p.solutionCount || 0) +
+              "</span>" +
+              "<span>👍 " +
+              escapeHtml(p.positiveFeedback || 0) +
+              " 👎 " +
+              escapeHtml(p.negativeFeedback || 0) +
+              "</span>" +
+              "</div>" +
+              "</div>"
+            );
+          })
+          .join("");
+      }
+
+      async function loadProblemDetail(problemId) {
+        try {
+          const [problemResult, solutionResult] = await Promise.all([
+            callBackend("problem.get", { problemId: problemId }),
+            callBackend("solution.list", { problemId: problemId }),
+          ]);
+
+          if (!problemResult.success) throw new Error(problemResult.error);
+
+          currentProblem = problemResult.data.problem;
+          currentProblemId = problemId;
+          const solutions = solutionResult.success
+            ? solutionResult.data.solutions || []
+            : [];
+
+          renderProblemDetail(currentProblem, solutions);
+          document.getElementById("problemDetailModal").classList.add("open");
+        } catch (err) {
+          alert("เปิดรายละเอียดไม่สำเร็จ: " + err.message);
+        }
+      }
+
+      function renderProblemDetail(problem, solutions) {
+        const content = document.getElementById("problemDetailContent");
+        let html = "";
+
+        html += '<div class="work-id-badge" style="background:#ffebee;color:#c62828;">' + escapeHtml(problem.problemId) + "</div>";
+
+        html += '<div class="detail-row"><span class="detail-label">สถานะ</span><span class="detail-value"><span class="status-badge status-' + escapeHtml(problem.status || "open") + '">' + escapeHtml(statusLabel(problem.status)) + "</span></span></div>";
+
+        html += '<div class="detail-row"><span class="detail-label">วันที่</span><span class="detail-value">' + escapeHtml(problem.workDate || "-") + "</span></div>";
+
+        if (problem.location) {
+          html += '<div class="detail-row"><span class="detail-label">สถานที่</span><span class="detail-value">' + escapeHtml(problem.location) + "</span></div>";
+        }
+
+        if (problem.workType) {
+          html += '<div class="detail-row"><span class="detail-label">ประเภท</span><span class="detail-value">' + escapeHtml(problem.workType) + "</span></div>";
+        }
+
+        html += '<div class="detail-row"><span class="detail-label">ปัญหา</span><span class="detail-value">' + escapeHtml(problem.originalTranscript || problem.description || "-") + "</span></div>";
+
+        if (problem.description) {
+          html += '<div class="detail-row"><span class="detail-label">รายละเอียด</span><span class="detail-value">' + escapeHtml(problem.description) + "</span></div>";
+        }
+
+        html += '<div class="form-label" style="margin-top:16px;">แนวแก้ไข (' + solutions.length + ")</div>";
+
+        if (solutions.length === 0) {
+          html += '<div class="hint">ยังไม่มีแนวแก้ไข — กดปุ่ม "เพมแนวแก้ไข" ด้านล่าง</div>';
+        } else {
+          html += '<div class="evidence-list">';
+          solutions.forEach(function (s) {
+            html += '<div class="solution-item">';
+            html += '<div class="solution-text">' + escapeHtml(s.solutionText) + "</div>";
+            html += '<div class="solution-meta">' + escapeHtml(s.createdBy || "-") + " · " + escapeHtml(s.createdAt || "") + "</div>";
+            html += '<div class="solution-feedback">';
+            html += '<button class="feedback-btn" onclick="sendFeedback(\'' + escapeHtml(problem.problemId) + '\',\'' + escapeHtml(s.solutionId) + '\',\'positive\')">👍 ' + escapeHtml(s.positiveFeedback || 0) + "</button>";
+            html += '<button class="feedback-btn" onclick="sendFeedback(\'' + escapeHtml(problem.problemId) + '\',\'' + escapeHtml(s.solutionId) + '\',\'negative\')">👎 ' + escapeHtml(s.negativeFeedback || 0) + "</button>";
+            html += "</div>";
+            html += "</div>";
+          });
+          html += "</div>";
+        }
+
+        content.innerHTML = html;
+      }
+
+      function closeProblemDetail() {
+        document.getElementById("problemDetailModal").classList.remove("open");
+        currentProblem = null;
+        currentProblemId = "";
+      }
+
+      function openProblemModal(transcript) {
+        if (!transcript) {
+          document.getElementById("problemTranscript").textContent = "";
+        } else {
+          document.getElementById("problemTranscript").textContent = transcript;
+        }
+        document.getElementById("problemWorkDate").value = todayISO();
+        document.getElementById("problemLocation").value = "";
+        document.getElementById("problemWorkType").value = "";
+        document.getElementById("problemTitle").value = "";
+        document.getElementById("problemDescription").value = transcript || "";
+        document.getElementById("problemCreateModal").classList.add("open");
+      }
+
+      function closeProblemModal() {
+        document.getElementById("problemCreateModal").classList.remove("open");
+      }
+
+      async function confirmCreateProblem() {
+        const btn = document.getElementById("btnCreateProblem");
+        btn.disabled = true;
+        btn.textContent = "กำลังแจ้ง...";
+
+        const payload = {
+          originalTranscript: document.getElementById("problemTranscript").textContent,
+          workDate: document.getElementById("problemWorkDate").value,
+          location: document.getElementById("problemLocation").value.trim(),
+          workType: document.getElementById("problemWorkType").value.trim(),
+          title: document.getElementById("problemTitle").value.trim(),
+          description: document.getElementById("problemDescription").value.trim(),
+        };
+
+        try {
+          const result = await callBackend("problem.create", payload);
+          btn.disabled = false;
+          btn.textContent = "ยืนยันแจ้งปัญหา";
+
+          if (result.success) {
+            closeProblemModal();
+            showHomeMessage("แจ้งปัญหาเรียบร้อย: " + result.data.problem.problemId, false);
+            loadProblems('all');
+          } else {
+            alert("แจ้งไม่สำเร็จ: " + result.error);
+          }
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = "ยืนยันแจ้งปัญหา";
+          alert("เกิดข้อผิดพลาด: " + err.message);
+        }
+      }
+
+      function openSolutionModal() {
+        if (!currentProblem) return;
+        currentSolutionProblemId = currentProblem.problemId;
+        document.getElementById("solutionProblemLabel").textContent =
+          "ปัญหา: " + (currentProblem.title || currentProblem.problemId);
+        document.getElementById("solutionTranscript").textContent = "";
+        document.getElementById("solutionText").value = "";
+        document.getElementById("solutionModal").classList.add("open");
+      }
+
+      function closeSolutionModal() {
+        document.getElementById("solutionModal").classList.remove("open");
+        currentSolutionProblemId = "";
+      }
+
+      async function confirmCreateSolution() {
+        const btn = document.getElementById("btnCreateSolution");
+        btn.disabled = true;
+        btn.textContent = "กำลังเพม...";
+
+        const solutionText = document.getElementById("solutionText").value.trim();
+        if (!solutionText) {
+          alert("กรุณากรอกแนวแก้ไข");
+          btn.disabled = false;
+          btn.textContent = "ยืนยันเพม";
+          return;
+        }
+
+        const payload = {
+          problemId: currentSolutionProblemId,
+          solutionText: solutionText,
+        };
+
+        try {
+          const result = await callBackend("solution.create", payload);
+          btn.disabled = false;
+          btn.textContent = "ยืนยันเพม";
+
+          if (result.success) {
+            closeSolutionModal();
+            showHomeMessage("เพมแนวแก้ไขเรียบร้อย", false);
+            loadProblemDetail(currentProblemId);
+            loadProblems('all');
+          } else {
+            alert("เพมไม่สำเร็จ: " + result.error);
+          }
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = "ยืนยันเพม";
+          alert("เกิดข้อผิดพลาด: " + err.message);
+        }
+      }
+
+      async function loadKnowledge(query) {
+        const results = document.getElementById("knowledgeResults");
+        if (!query) {
+          results.innerHTML =
+            '<div class="empty-state"><div class="empty-state-icon">🔍</div><h3>ค้นหาปัญหา</h3><p>พิมพ์คำค้นหาเพื่อหา Problem + Solution</p></div>';
+          return;
+        }
+
+        results.innerHTML = '<div class="loading"><div class="spinner"></div><p>กำลังค้นหา...</p></div>';
+
+        try {
+          const result = await callBackend("knowledge.search", { query: query });
+          if (!result.success) throw new Error(result.error);
+
+          const items = result.data.results || [];
+          renderKnowledge(items);
+        } catch (err) {
+          results.innerHTML = '<div class="error-message">ค้นหาไม่สำเร็จ: ' + err.message + "</div>";
+        }
+      }
+
+      function renderKnowledge(items) {
+        const results = document.getElementById("knowledgeResults");
+
+        if (!items.length) {
+          results.innerHTML =
+            '<div class="empty-state"><div class="empty-state-icon">🔍</div><h3>ไม่พบผลลัพธ์</h3><p>ลองค้นหาคำอื่น</p></div>';
+          return;
+        }
+
+        results.innerHTML = items
+          .map(function (item) {
+            return (
+              '<div class="knowledge-card" onclick="loadProblemDetail(\'' +
+              escapeHtml(item.problemId) +
+              "')\">" +
+              '<div class="knowledge-card-title">' +
+              escapeHtml(item.title || "ปัญหาไม่มีหัวข้อ") +
+              "</div>" +
+              '<div class="knowledge-card-solution">' +
+              escapeHtml(
+                (item.solutions && item.solutions[0]
+                  ? item.solutions[0].solutionText
+                  : item.description || "") || "ยังไม่มีแนวแก้ไข"
+              ) +
+              "</div>" +
+              '<div class="knowledge-card-stats">' +
+              "<span>👍 " +
+              escapeHtml(item.positiveFeedback || 0) +
+              "</span>" +
+              "<span>👎 " +
+              escapeHtml(item.negativeFeedback || 0) +
+              "</span>" +
+              "<span>💡 " +
+              escapeHtml(item.solutionCount || 0) +
+              " แนวแก้ไข</span>" +
+              "</div>" +
+              "</div>"
+            );
+          })
+          .join("");
+      }
+
+      let searchTimeout;
+      function debounceSearch() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(function () {
+          const q = document.getElementById("knowledgeSearch").value.trim();
+          if (q.length >= 2) {
+            loadKnowledge(q);
+          }
+        }, 500);
+      }
+
+      async function sendFeedback(problemId, solutionId, type) {
+        try {
+          const result = await callBackend("feedback.create", {
+            problemId: problemId,
+            solutionId: solutionId,
+            type: type,
+          });
+          if (result.success) {
+            loadProblemDetail(problemId);
+          } else {
+            alert("ส่ง Feedback ไม่สำเร็จ: " + result.error);
+          }
+        } catch (err) {
+          alert("เกิดข้อผิดพลาด: " + err.message);
+        }
       }
 
       if ("serviceWorker" in navigator) {
