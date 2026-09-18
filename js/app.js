@@ -23,11 +23,28 @@ var KKU = KKU || {};
   }
 
   function detectCurrentPage() {
-    var path = window.location.pathname;
-    if (path === '/' || path.endsWith('index.html')) return 'index';
-    var map = {'login.html':'login','home.html':'home','record-work.html':'record','review-work.html':'review','history.html':'history','work-detail.html':'detail'};
-    for (var k in map) { if (path.indexOf(k) !== -1) return map[k]; }
-    return 'login';
+    var path = window.location.pathname || '';
+    // GitHub Pages: /KKU-Follow/ or /KKU-Follow serves index.html
+    if (
+      path === '/' ||
+      path.endsWith('/') ||
+      path.endsWith('index.html') ||
+      /\/KKU-Follow\/?$/.test(path)
+    ) {
+      return 'index';
+    }
+    var map = {
+      'login.html': 'login',
+      'home.html': 'home',
+      'record-work.html': 'record',
+      'review-work.html': 'review',
+      'history.html': 'history',
+      'work-detail.html': 'detail'
+    };
+    for (var k in map) {
+      if (path.indexOf(k) !== -1) return map[k];
+    }
+    return 'index';
   }
 
   function navigateTo(page, params) {
