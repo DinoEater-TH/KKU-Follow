@@ -1,0 +1,17 @@
+{
+  "name": "KKU Follow",
+  "short_name": "KKU Follow",
+  "description": "ระบบบันทึกและติดตามการปฏิบัติงาน บุคลากร มข.",
+  "start_url": "/KKU-Follow/index.html",
+  "scope": "/KKU-Follow/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1a56db",
+  "background_color": "#ffffff",
+  "categories": ["productivity", "utilities"],
+  "lang": "th",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

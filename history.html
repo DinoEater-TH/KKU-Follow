@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="th"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"><meta name="theme-color" content="#1a56db"><title>ประวัติ — KKU Follow</title>
+<link rel="stylesheet" href="css/style.css"><link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head><body><div class="page-container">
+<div class="page-header"><button class="back-btn" onclick="history.back()">←</button><h1>ประวัติการทำงาน</h1></div>
+<div class="page-content">
+<div id="loadingSection" class="text-center" style="padding:40px 0;"><div class="loading-spinner" style="margin:0 auto;"></div><p style="margin-top:12px;color:var(--color-gray-500);">กำลังโหลด...</p></div>
+<div id="historyList" class="hidden"></div>
+<div id="emptyState" class="empty-state hidden"><div class="icon">📋</div><p>ยังไม่มีประวัติการทำงาน</p><button class="btn btn-primary mt-4" onclick="KKU.navigateTo('home')">เริ่มบันทึกงาน</button></div>
+<div id="loadMoreSection" class="hidden text-center mt-4"><button id="loadMoreBtn" class="btn btn-secondary">โหลดเพิ่ม</button></div>
+</div></div>
+<script src="js/app.js"></script><script src="js/api.js"></script><script src="js/ui.js"></script></body></html>

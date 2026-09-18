@@ -1,0 +1,16 @@
+<!DOCTYPE html><html lang="th"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"><meta name="theme-color" content="#1a56db"><title>รายละเอียดงาน — KKU Follow</title>
+<link rel="stylesheet" href="css/style.css"><link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head><body><div class="page-container">
+<div class="page-header"><button class="back-btn" onclick="history.back()">←</button><h1>รายละเอียดงาน</h1><div style="flex:1;"></div><button id="editBtn" class="back-btn" title="แก้ไข">✏️</button><button id="deleteBtn" class="back-btn" title="ลบ">🗑️</button></div>
+<div class="page-content">
+<div id="loadingSection" class="text-center" style="padding:40px 0;"><div class="loading-spinner" style="margin:0 auto;"></div></div>
+<div id="detailSection" class="hidden">
+<div class="card"><div class="card-title" id="detailDate"></div><div class="card-meta"><span id="detailTime">🕐 </span><span id="detailLocation">📍 </span></div><div style="margin-top:8px;"><span id="detailType" style="display:inline-block;background:var(--color-primary-light);color:var(--color-primary);padding:2px 10px;border-radius:var(--radius-full);font-size:0.8125rem;font-weight:500;"></span></div><p id="detailDescription" style="margin-top:12px;font-size:0.9375rem;line-height:1.6;"></p></div>
+<div class="card"><div class="flex justify-between items-center" style="margin-bottom:12px;"><div class="card-title" style="margin-bottom:0;">📷 ภาพหลักฐาน</div><button id="addPhotoBtn" class="btn btn-secondary" style="padding:6px 12px;font-size:0.8125rem;">เพิ่มรูป</button></div><div id="photoList"></div><p id="noPhotos" class="text-sm" style="color:var(--color-gray-400);">ยังไม่มีภาพหลักฐาน</p></div>
+<div class="card"><div class="flex justify-between items-center" style="margin-bottom:12px;"><div class="card-title" style="margin-bottom:0;">🔗 ลิงก์ที่เกี่ยวข้อง</div><button id="addLinkBtn" class="btn btn-secondary" style="padding:6px 12px;font-size:0.8125rem;">เพิ่มลิงก์</button></div><div id="linkList"></div><p id="noLinks" class="text-sm" style="color:var(--color-gray-400);">ยังไม่มีลิงก์</p></div>
+<div class="card"><div class="card-title">🗣️ ข้อความต้นฉบับ</div><p id="detailTranscript" style="font-size:0.875rem;color:var(--color-gray-500);white-space:pre-wrap;"></p></div>
+</div>
+<div id="errorSection" class="hidden empty-state"><div class="icon">❌</div><p id="errorMessage">ไม่พบข้อมูล</p><button class="btn btn-secondary mt-4" onclick="history.back()">กลับ</button></div>
+</div></div>
+<script src="js/app.js"></script><script src="js/api.js"></script><script src="js/ui.js"></script><script src="js/photo.js"></script></body></html>
