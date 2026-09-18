@@ -2,9 +2,8 @@
 // KKU Follow - service-worker.js
 // ============================================================
 
-var CACHE_NAME = 'kku-follow-v2';
+var CACHE_NAME = 'kku-follow-v3';
 var ASSETS_TO_CACHE = [
-  './',
   './index.html',
   './login.html',
   './home.html',
@@ -19,9 +18,7 @@ var ASSETS_TO_CACHE = [
   './js/api.js',
   './js/ui.js',
   './js/photo.js',
-  './manifest.json',
-  './assets/icon-192.png',
-  './assets/icon-512.png'
+  './manifest.json'
 ];
 
 self.addEventListener('install', function(event) {
